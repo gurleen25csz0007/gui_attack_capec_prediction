@@ -1,0 +1,50 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Raw CVE datasets
+00_input_data/
+
+# Large processed dataset
+02_preprocessing/dataset.csv
+
+# Model checkpoints / embeddings
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.npy
+*.npz
+
+# SLURM / execution logs
+*.out
+*.err
+*.log
+
+# Generated experiment outputs
+03_keyword_making/outputs/
+
+# Cache
+.cache/
+.ipynb_checkpoints/
+
+# Temporary files
+temp.txt
+*.tmp
+
+# Environment / secrets
+.env
+.env.*
+
+# Evaluation generated outputs
+04_evaluation/batch_run/outputs/
+
+# Trained UI models
+05_UI/models/
+
+# Model/checkpoint files
+*.pt
+*.pth
+*.npy
+*.npz

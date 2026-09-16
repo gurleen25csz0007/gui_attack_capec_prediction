@@ -1,0 +1,737 @@
+STAGE 04 EVALUATION: MODEL INPUTS, METHODS, SIZES, AND OUTPUTS
+==============================================================
+
+This document describes the models that are actually implemented in
+04_evaluation, what each model requires, what it computes, and what it saves.
+Dimensions below describe the current code and canonical label spaces; new
+checkpoint sizes are recorded after the complete comparison run.
+
+
+1. COMMON DATA AND SPLIT
+========================
+
+Canonical evaluation inputs
+---------------------------
+
+Files:
+  ../03_keyword_making/outputs/keybert_modified/training_final.csv
+  ../03_keyword_making/outputs/keybert_modified/validation_final.csv
+  ../03_keyword_making/outputs/keybert_modified/testing_final.csv
+
+Required columns:
+  cve_id                 Unique CVE identifier.
+  cleaned_description    Stage-02 text used as model input.
+  weakness               One or more ground-truth CWE identifiers.
+  capec_id               One or more ground-truth CAPEC identifiers.
+
+Stage 04 loads the deterministic CVE-ID-level split already produced by
+KeyBERT Modified with random seed 42; it does not resplit the data:
+
+  Training:    93,740 rows (70%)
+  Validation:  20,087 rows (15%)
+  Testing:     20,088 rows (15%)
+
+CVE IDs do not overlap between these splits. Training learns model weights;
+validation selects checkpoints, calibration, fusion weights, and thresholds;
+testing is used only for the final reported metrics.
+
+Additional ground-truth inputs
+------------------------------
+
+  ../01_cwe_capec_ground_truth/CWE_MAPPED.csv
+      Columns cwe_id and capec_ids. Used to propagate predicted CWE scores to
+      candidate CAPEC scores.
+
+  ../01_cwe_capec_ground_truth/capec_relationships.csv
+      Supplies the RAE-XMC CAPEC vocabulary and authoritative CAPEC names used
+      as label text.
+
+Stage-03 inputs used by the benchmark NNs
+------------------------------------------
+
+  ../03_keyword_making/outputs/keybert_modified/training_final.csv
+  ../03_keyword_making/outputs/keybert_modified/validation_final.csv
+  ../03_keyword_making/outputs/keybert_modified/testing_final.csv
+
+These contain cleaned_description, keyphrases, weakness, and capec_id. The
+description-plus-keyword NN variants require these files. CGDPF is evaluated
+once with description-only checkpoints and once with keyword checkpoints.
+
+
+2. MODEL SIZE SUMMARY
+=====================
+
++------------------------------+-----------+------------+------------------+-------------------+----------------+
+| Model                        | Input dim | Output dim | Trainable params | Total with MiniLM | Checkpoint     |
++------------------------------+-----------+------------+------------------+-------------------+----------------+
+| Direct CAPEC NN              | 384       | 560        | 747,056          | 23,460,272        | generated      |
+| Direct CAPEC NN + keywords   | 768       | 560        | 943,664          | 23,656,880        | generated      |
+| Auxiliary CWE NN             | 384       | 585        | 759,881          | 23,473,097        | 2.92 MiB       |
+| Auxiliary CWE NN + keywords  | 768       | 585        | 956,489          | 23,669,705        | 3.67 MiB       |
+| Fine-tuned CAPEC NN          | 384       | 560        | 23,460,272       | 23,460,272        | generated      |
+| Fine-tuned CAPEC NN+keywords | 768       | 560        | 23,656,880       | 23,656,880        | generated      |
+| Fine-tuned CWE NN            | 384       | 585        | 23,473,097       | 23,473,097        | generated      |
+| Fine-tuned CWE NN+keywords   | 768       | 585        | 23,669,705       | 23,669,705        | generated      |
+| RAE-XMC                      | tokens    | 560        | 22,713,216       | 22,713,216        | 258.94 MiB (*) |
+| CGDPF (either input case)    | scores    | 560        | 0 new parameters | dependency models | no checkpoint  |
+| Our Approach                 | scores    | 560        | 0 new parameters | dependency models | no checkpoint  |
++------------------------------+-----------+------------+------------------+-------------------+----------------+
+
+MiniLM is sentence-transformers/all-MiniLM-L6-v2 with 384-dimensional output
+and 22,713,216 encoder parameters. The first four NN baselines freeze MiniLM;
+the four fine-tuned variants update the encoder and MLP end to end. All CAPEC
+variants use the same canonical 560-label vocabulary.
+
+(*) The RAE-XMC checkpoint is 258.94 MiB because it also contains optimizer,
+scheduler, and mixed-precision training state. Its actual encoder state is
+about 86.64 MiB. Its separate 94,300 x 384 retrieval matrix is 138.13 MiB, and
+the complete saved RAE-XMC directory is approximately 455.61 MiB.
+
+The deployed 05_UI model bundle is approximately 485.49 MiB:
+
+  Frozen sentence encoder:   87.34 MiB
+  RAE-XMC bundle:           398.13 MiB
+  Fusion configuration:       0.02 MiB
+
+
+3. DIRECT CVE-TO-CAPEC NN
+=========================
+
+Script
+------
+
+  NN.py
+
+Purpose
+-------
+
+Predict CAPEC labels directly from a CVE's cleaned description. This is the
+direct CAPEC branch used by CGDPF and Our Approach.
+
+Input
+-----
+
+  cleaned_description: one text string per CVE
+  capec_id: training/evaluation target only
+
+Feature construction
+--------------------
+
+  cleaned_description
+      -> frozen all-MiniLM-L6-v2
+      -> L2-normalized 384-dimensional vector
+
+Method and architecture
+-----------------------
+
+  384 -> Linear(512) -> ReLU -> Dropout(0.30)
+      -> Linear(512) -> ReLU -> Dropout(0.30)
+      -> Linear(560)
+      -> sigmoid scores
+
+Loss:
+  BCEWithLogitsLoss with per-label positive weights. Positive weights are
+  clipped to the range 1 to 50.
+
+Training configuration:
+  batch size 256; maximum 50 epochs; learning rate 1e-3; weight decay 1e-4;
+  early-stopping patience 5. Validation Micro-F1 selects the best epoch.
+
+Output
+------
+
+  Dense output:       560 sigmoid scores in the canonical CAPEC/no-ID space.
+  Final label set:    labels whose scores are >= validation threshold 0.94.
+  Empty-set fallback: highest-scoring label.
+  Ranked output:      CAPEC labels sorted by score for Hit@K/Recall@K.
+
+Saved artifacts
+---------------
+
+  outputs/NN/best_capec_multilabel_mlp.pt   Best weights and label order.
+  outputs/NN/metrics.json                   Validation/test metrics and threshold.
+  outputs/NN/test_predictions.csv           Truth, threshold set, and Top-K output.
+  outputs/NN/topk_hit_results.csv           Row-level ranking results.
+  outputs/NN/label_info.csv                 Label indices and frequencies.
+
+
+4. DIRECT CVE-TO-CAPEC NN + KEYWORDS
+====================================
+
+Script
+------
+
+  NN_keywords.py
+
+Purpose
+-------
+
+Benchmark whether Stage-03 keyphrases improve direct CAPEC prediction. This
+checkpoint supplies the direct branch of `CGDPF_keywords.py`.
+
+Input
+-----
+
+  cleaned_description: Stage-02 description
+  keyphrases:          semicolon-separated Stage-03 phrases
+  capec_id:            training/evaluation target only
+
+Feature construction
+--------------------
+
+  description -> frozen MiniLM -> 384 dimensions
+  each keyphrase -> same frozen MiniLM -> 384 dimensions
+  all keyphrase vectors -> arithmetic mean -> 384 dimensions
+  concatenate(description, mean-keyphrase) -> 768 dimensions
+
+An empty keyphrase field produces an all-zero 384-dimensional keyword vector.
+
+Method and architecture
+-----------------------
+
+  768 -> Linear(512) -> ReLU -> Dropout(0.30)
+      -> Linear(512) -> ReLU -> Dropout(0.30)
+      -> Linear(560)
+      -> sigmoid scores
+
+Loss and optimization match the direct CAPEC NN. Validation Micro-F1 selects
+the best epoch within the shared 50-epoch, patience-5 budget.
+
+Output
+------
+
+  Dense output:       560 sigmoid scores in the canonical CAPEC vocabulary.
+  Final label set:    scores >= validation threshold 0.94.
+  Ranked output:      Top-K CAPEC labels and scores.
+
+Saved artifacts
+---------------
+
+  outputs/NN_keywords/best_capec_multilabel_mlp.pt
+  outputs/NN_keywords/metrics.json
+  outputs/NN_keywords/test_predictions.csv
+  outputs/NN_keywords/topk_hit_results.csv
+  outputs/NN_keywords/label_info.csv
+
+Important:
+  This model and the description-only CAPEC model both use the canonical
+  560-label vocabulary from Stage 01, so the two CGDPF cases are comparable.
+
+
+5. AUXILIARY CVE-TO-CWE NN
+==========================
+
+Script
+------
+
+  CVE_to_CWE/NN_1way.py
+
+Purpose
+-------
+
+Predict CWE labels from the cleaned CVE description. CGDPF converts the top-10
+CWE scores into CAPEC mapping scores.
+
+Input
+-----
+
+  cleaned_description: one text string per CVE
+  weakness:            training/evaluation CWE target only
+
+Feature construction
+--------------------
+
+  cleaned_description -> frozen MiniLM -> normalized 384-dimensional vector
+
+Method and architecture
+-----------------------
+
+  384 -> Linear(512) -> ReLU -> Dropout(0.30)
+      -> Linear(512) -> ReLU -> Dropout(0.30)
+      -> Linear(585)
+      -> sigmoid scores
+
+Loss:
+  Weighted BCEWithLogitsLoss, with the same optimizer and early-stopping
+  settings as the CAPEC NN. Validation Micro-F1 selects the best epoch.
+
+Output
+------
+
+  Dense output:       585 sigmoid scores, one per CWE/no-ID label.
+  Final label set:    scores >= validation threshold 0.98.
+  Ranked output:      Top-K CWE labels and scores.
+  CGDPF input:        only the ten highest-scoring CWE labels are propagated.
+
+Saved artifacts
+---------------
+
+  outputs/CVE_to_CWE/NN_1way/best_cwe_multilabel_mlp.pt
+  outputs/CVE_to_CWE/NN_1way/metrics.json
+  outputs/CVE_to_CWE/NN_1way/test_predictions.csv
+  outputs/CVE_to_CWE/NN_1way/topk_hit_results.csv
+  outputs/CVE_to_CWE/NN_1way/label_info.csv
+
+
+6. AUXILIARY CVE-TO-CWE NN + KEYWORDS
+=====================================
+
+Script
+------
+
+  CVE_to_CWE/NN_keywords.py
+
+Purpose
+-------
+
+Keyword ablation/benchmark for CWE prediction. It is not used by the current
+CGDPF or final fusion.
+
+Input and features
+------------------
+
+  cleaned_description -> frozen MiniLM -> 384 dimensions
+  keyphrases -> individual MiniLM embeddings -> mean pool -> 384 dimensions
+  concatenated feature -> 768 dimensions
+  weakness -> training/evaluation target only
+
+Method and architecture
+-----------------------
+
+  768 -> Linear(512) -> ReLU -> Dropout(0.30)
+      -> Linear(512) -> ReLU -> Dropout(0.30)
+      -> Linear(585)
+      -> sigmoid scores
+
+Validation Micro-F1 selects the best epoch within the shared training budget.
+
+Output
+------
+
+  Dense output:       585 CWE sigmoid scores.
+  Final label set:    scores >= validation threshold 0.98.
+  Ranked output:      Top-K CWE labels and scores.
+
+Saved artifacts are under outputs/CVE_to_CWE/NN_keywords/ and follow the same
+layout as the description-only CWE model.
+
+
+FINE-TUNED NN VARIANTS
+======================
+
+Scripts:
+
+  NN_fine_tune.py
+  NN_fine_tune_keywords.py
+  CVE_to_CWE/NN_fine_tune.py
+  CVE_to_CWE/NN_fine_tune_keywords.py
+
+These four models use the same targets, split files, MLP shape, 50-epoch
+maximum, patience 5, dropout 0.30, effective batch size 256, threshold grid,
+and validation Micro-F1 selection used by the frozen baselines. Their physical
+batch size is 32 with eight-step gradient accumulation. MiniLM is updated with
+learning rate 2e-5 while the classifier uses 1e-3. Keyword variants use the
+selected KeyBERT Modified keyphrases.
+
+
+7. RAE-XMC
+==========
+
+Script
+------
+
+  rae_xmc.py
+
+Purpose
+-------
+
+Perform retrieval-augmented extreme multi-label CVE-to-CAPEC prediction. This
+is both a standalone model and a branch of Our Approach.
+
+Input
+-----
+
+  cleaned_description: CVE query text
+  capec_id:            training/evaluation target only
+  CAPEC label text:    "CAPEC-ID: authoritative CAPEC name"
+
+The current configuration has use_keyphrases=False. Stage-03 keywords are not
+input to RAE-XMC.
+
+Method
+------
+
+  1. A shared all-MiniLM-L6-v2 encoder embeds CVE descriptions and CAPEC label
+     text into one normalized 384-dimensional space.
+  2. The entire 22.7-million-parameter encoder is fine-tuned; there is no MLP
+     classifier head and no BCE loss.
+  3. Training uses sampled decoupled contrastive loss, two hard-negative labels
+     per input, same-tower non-overlapping negatives, and hard-negative refresh
+     every epoch.
+  4. The final memory contains 93,740 training-description vectors followed by
+     560 CAPEC label-text vectors: 94,300 vectors in total.
+  5. Inference retrieves the nearest 200 memory entries using inner product on
+     normalized embeddings.
+  6. A temperature-0.04 softmax weights the retrieved labels. Instance-label
+     and label-text contributions are combined with validation-selected
+     lambda=0.50.
+
+Training configuration:
+  maximum 50 epochs; batch size 32; encoder learning rate 2e-5; weight decay
+  1e-2; warmup 10%; maximum token length 160; patience 5. Validation Micro-F1
+  selects the actual stopping epoch.
+
+Output
+------
+
+  Dense output:       560 retrieval scores over the full RAE label vocabulary.
+  Final label set:    scores >= standalone validation threshold 0.20.
+  Ranked output:      Top-1, Top-3, Top-5, and Top-10 CAPEC candidates.
+  Retrieval process:  nearest training instances and label-text keys contribute
+                      internally to each CAPEC score. The current predict()
+                      response does not export those neighbors as evidence.
+
+Saved artifacts
+---------------
+
+  outputs/RAE_XMC/best_model.pt
+      Fine-tuned encoder plus training-state checkpoint.
+
+  outputs/RAE_XMC/retrieval_embeddings.npy
+      The fixed 94,300 x 384 retrieval memory.
+
+  outputs/RAE_XMC/retrieval_memory_labels.npz
+      Sparse label values for training keys and label-memory indices.
+
+  outputs/RAE_XMC/tokenizer/ and encoder_config/
+      Tokenizer and encoder reconstruction data.
+
+  outputs/RAE_XMC/calibration_parameters.json
+      Standalone lambda, temperature, and threshold.
+
+  outputs/RAE_XMC/test_metrics.json
+  outputs/RAE_XMC/test_predictions.csv
+  outputs/RAE_XMC/topk_predictions.csv
+  outputs/RAE_XMC/training_history.csv
+  outputs/RAE_XMC/label_info.csv
+  outputs/RAE_XMC/retrieval_memory_metadata.csv
+
+The saved backend is exact chunked NumPy inner-product search. The memory
+contains no validation or testing instances.
+
+
+8. CGDPF
+========
+
+Script
+------
+
+  CGDPF.py
+
+Purpose
+-------
+
+Combine direct CVE-to-CAPEC prediction with indirect CVE-to-CWE-to-CAPEC
+propagation.
+
+Required inputs
+---------------
+
+  cleaned_description
+  outputs/NN/best_capec_multilabel_mlp.pt
+  outputs/CVE_to_CWE/NN_1way/best_cwe_multilabel_mlp.pt
+  ../01_cwe_capec_ground_truth/CWE_MAPPED.csv
+  frozen all-MiniLM-L6-v2
+
+Method
+------
+
+  Direct branch:
+    description -> MiniLM -> direct CAPEC NN -> 560 CAPEC scores
+
+  Mapping branch:
+    description -> MiniLM -> CWE NN -> 585 CWE scores
+    -> keep Top-10 CWE predictions
+    -> map each CWE through CWE_MAPPED.csv
+    -> for each CAPEC, retain maximum supporting CWE score
+
+  Both score branches receive independent validation-fitted Platt scaling.
+  The validation-selected current formula is:
+
+    CGDPF_score = 0.40 * calibrated_direct
+                + 0.60 * calibrated_CWE_mapping
+
+  Final multi-label threshold = 0.60.
+
+Model size
+----------
+
+CGDPF trains no new neural weights. It depends on 1,447,942 trained MLP
+parameters across the direct CAPEC and CWE heads, plus frozen MiniLM. Alpha,
+calibration coefficients, and the threshold are small JSON/scalar parameters.
+
+Output
+------
+
+  Dense output:       560 calibrated CGDPF CAPEC scores per CVE.
+  Final label set:    scores >= 0.60.
+  Ranked output:      Top-K CAPEC labels and scores.
+
+Saved run directory
+-------------------
+
+  outputs/combined/CGDPF_<timestamp>/
+
+Important files:
+  validation/test_direct_scores.npy
+  validation/test_cwe_scores.npy
+  validation/test_mapping_scores.npy
+  validation/test_CGDPF_scores.npy
+  calibration_parameters.json
+  fusion_parameters.json
+  validation_metrics.json and test_metrics.json
+  test_predictions.csv and topk_predictions.csv
+
+
+9. RAE-XMC + CGDPF: OUR APPROACH
+================================
+
+Script
+------
+
+  our_approach.py             cleaned_description
+  our_approach_keywords.py    cleaned_description + KeyBERT keywords
+
+Purpose
+-------
+
+Produce two controlled final CVE-to-CAPEC results by combining the
+complementary CGDPF and RAE-XMC scores. No new encoder or classifier is trained
+in these scripts. The keyword case uses NN_keywords for its CWE and direct
+CAPEC branches; RAE-XMC remains description-based in both cases.
+
+Required inputs
+---------------
+
+  cleaned_description
+  keyphrases for the keyword-aware case
+  Direct CAPEC NN checkpoint and its 560-label order
+  Auxiliary CWE NN checkpoint and its 585-label order
+  CWE_MAPPED.csv
+  Complete saved RAE-XMC directory
+  Optional CGDPF score cache for faster batch evaluation
+
+Method
+------
+
+First, validation-fitted Platt scaling independently calibrates:
+
+  D = calibrated direct-CAPEC score
+  M = calibrated CWE-to-CAPEC mapping score
+  R = calibrated RAE-XMC score
+
+RAE-XMC's 560-label output is aligned by CAPEC identifier to the direct model's
+560-label common vocabulary. The current alignment matches all 560 required
+labels and excludes 115 RAE-only labels. Six CAPEC IDs from the mapping file are
+not in the common 560-label vocabulary.
+
+The validation-selected current calculation is:
+
+  CGDPF = 0.40 * D + 0.60 * M
+  FINAL = 0.50 * R + 0.50 * CGDPF
+
+  final threshold = 0.40
+
+The alpha, beta, Platt coefficients, and threshold are selected using only the
+validation split and are fixed before test evaluation.
+
+Model size
+----------
+
+The fusion adds zero neural parameters. It requires the two baseline MLP heads,
+the frozen MiniLM sentence encoder, the fine-tuned RAE-XMC encoder, its retrieval
+memory, label maps, and the small calibration/fusion JSON files.
+
+Output
+------
+
+For each CVE, Our Approach produces:
+
+  1. A dense 560-dimensional final CAPEC score vector.
+  2. A multi-label CAPEC set containing scores >= 0.40.
+  3. A Top-K CAPEC ranking, independent of the thresholded set.
+  4. For known test rows, exact match, F1, Jaccard, Hit@K, Recall@K, precision@K,
+     NDCG@K, hamming loss, and ranking-average-precision metrics.
+
+Saved run directory
+-------------------
+
+  outputs/combined/our_approach_<timestamp>/
+  outputs/combined/our_approach_keywords_<timestamp>/
+
+Important files:
+  test_final_fusion_scores.npy       Shape: 20,088 x 560 float32
+  validation_final_fusion_scores.npy Shape: 20,087 x 560 float32
+  test_predictions.csv               Threshold-selected CAPEC sets
+  topk_predictions.csv               Ranked CAPEC candidates
+  test_metrics.json                  Metrics for every component and final model
+  model_comparison.csv               Direct/mapping/CGDPF/RAE/final comparison
+  calibration_parameters.json        Platt coefficients and branch thresholds
+  fusion_parameters.json             Alpha=0.40, beta=0.50, threshold=0.40
+  label_alignment_report.json        Vocabulary-alignment audit
+  score_matrix_check.json            Saved-matrix dimension validation
+  run_config.json                    Inputs, versions, split hashes, and settings
+
+
+10. END-TO-END EVALUATION FLOW
+==============================
+
+MITRE CWE/CAPEC sources                 Raw NVD CVE CSV files
+        |                                        |
+        v                                        |
+Stage 01: CWE/CAPEC ground truth                 |
+  - CWE_MAPPED.csv                               |
+  - capec_relationships.csv                      |
+        |                                        |
+        +-------------------+--------------------+
+                            |
+                            v
+Stage 02: CVE preprocessing and target attachment
+  - mask vendor/product/version
+  - remove identifiers/noise
+  - lowercase, lemmatize, remove selected stopwords
+  - collapse adjacent duplicate tokens
+  - save the KeyBERT Modified train/validation/test files with descriptions,
+    keywords, and targets
+        |
+        +-----------------------------------+
+        |                                   |
+        v                                   v
+Optional Stage 03                    Final Stage-04 data loader
+  - TextRank/occlusion keywords       - fixed 70/15/15 split
+  - *_final.csv benchmark inputs      - CVE-ID leakage check
+        |                                   |
+        v                                   |
+NN + keyword benchmarks                    |
+                                            v
+                         +------------------+------------------+
+                         |                  |                  |
+                         v                  v                  v
+                 Direct CAPEC NN       CWE NN             RAE-XMC
+                   560 scores         585 scores           560 scores
+                         |                  |                  |
+                         |                  v                  |
+                         |          CWE_MAPPED.csv             |
+                         |          mapping scores             |
+                         |                  |                  |
+                         +--------> CGDPF <-+                  |
+                                   560 scores                  |
+                                         \                    /
+                                          \                  /
+                                           v                v
+                                  validation calibration/alignment
+                                                |
+                                                v
+                                  Our Approach final fusion
+                                      560 CAPEC scores
+                                                |
+                              +-----------------+----------------+
+                              |                                  |
+                              v                                  v
+                    threshold-selected set                 ranked Top-K list
+                              |                                  |
+                              +-----------------+----------------+
+                                                v
+                                      test metrics + CSV/JSON
+
+
+11. WHAT MUST EXIST BEFORE RUNNING THE FINAL SBATCH
+===================================================
+
+The three batch files require these source files before they start:
+
+  ../01_cwe_capec_ground_truth/CWE_MAPPED.csv
+  ../01_cwe_capec_ground_truth/capec_relationships.csv
+  ../01_cwe_capec_ground_truth/3000_capec.csv
+  ../03_keyword_making/outputs/keybert_modified/training_final.csv
+  ../03_keyword_making/outputs/keybert_modified/validation_final.csv
+  ../03_keyword_making/outputs/keybert_modified/testing_final.csv
+
+The first two jobs train and evaluate the four CAPEC NNs and four CWE NNs,
+including both fine-tuned variants. The dependent third job trains RAE-XMC;
+evaluates both CGDPF cases; and evaluates description-only and keyword-aware
+Our Approach.
+
+Submit the isolated batch run with:
+
+  bash /home/gurleen/paper/methodology/04_evaluation/batch_run/submit_all.sh
+
+Each Slurm request is one GPU, 4 CPU cores, 32 GB RAM, and a two-day limit in
+the torchgpu Conda environment. Models within each file run sequentially. The
+fusion job uses an afterok dependency on both baseline jobs. Results go to
+batch_run/outputs, while group and per-model stdout/stderr files go to
+batch_run/logs.
+
+
+12. FROM-SCRATCH ORDER INCLUDING ALL BENCHMARKS
+================================================
+
+If none of the checkpoints exist, the complete logical order is:
+
+  A. Run Stage 01 ground-truth generation.
+  B. Run Stage 02 preprocessing to create dataset.csv.
+  C. Run Stage 03 KeyBERT Modified and verify its three final split files.
+  D. Run batch_run/submit_all.sh; it trains and evaluates the full model matrix.
+
+
+13. INFERENCE OUTPUT USED BY 05_UI
+==================================
+
+For a CVE ID, the UI resolves the stored original and cleaned descriptions. For
+free text, it runs the Stage-02-compatible online preprocessor. It then sends
+cleaned_description through the saved Our Approach inference path.
+
+The UI response contains:
+
+  description             Original/resolved text.
+  cleaned_description     Exact text passed to model branches.
+  predictions             Ranked CAPEC IDs with final fusion scores.
+  threshold_predictions   Final CAPEC set at threshold 0.40.
+  ground_truth_cwes       Available only for known dataset CVEs.
+  ground_truth_capecs     Available only for known dataset CVEs.
+  evaluation              Hit/exact checks when ground truth exists.
+  model                    Model name, alpha, beta, threshold, device, and path.
+
+Stage-03 keywords are shown in the UI for inspection but are not used by the
+current final description-only checkpoints.
+
+
+14. CONSISTENCY REQUIREMENTS AND COMMON ERRORS
+==============================================
+
+1. Do not change cleaned-description preprocessing without regenerating Stage
+   02/03 data and retraining the affected model checkpoints. Otherwise training
+   and inference representations differ.
+
+2. Never combine score matrices by column position unless label-name alignment
+   has been verified. The saved models use different vocabulary sizes.
+
+3. Do not select thresholds, alpha, beta, or Platt coefficients using test
+   labels. These are validation-only parameters.
+
+4. Keep the exact seed-42 CVE-ID split. A row-level or independently generated
+   split makes checkpoint scores and cached matrices incomparable.
+
+5. A threshold-selected multi-label set and a Top-K ranking are different
+   outputs. Hit@K uses the ranking; Exact Match/F1/Jaccard use the threshold set.
+
+6. RAE-XMC inference requires both its encoder checkpoint and retrieval memory.
+   The best_model.pt file alone is not a complete deployable RAE-XMC model.
+
+7. The combined run directories are large mainly because they retain full
+   validation and test score matrices. CGDPF and Our Approach themselves add no
+   large learned checkpoint.
+
+For the current numerical performance tables, see:
+
+  ../model_performance_tables.txt

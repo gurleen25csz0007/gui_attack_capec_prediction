@@ -1,0 +1,4 @@
+cd /home/gurleen/paper/methodology/05_UI
+/home/gurleen/miniconda3/envs/torchgpu/bin/python server.py
+
+Open http://127.0.0.1:8000 in your browser.

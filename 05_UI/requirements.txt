@@ -1,0 +1,11 @@
+# Runtime packages for Stage-02/03 preprocessing and the saved final fusion.
+networkx
+numpy
+pandas
+keybert==0.9.0
+scipy
+scikit-learn
+sentence-transformers
+spacy
+torch
+transformers

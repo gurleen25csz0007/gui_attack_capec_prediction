@@ -1,0 +1,86 @@
+ACTUAL SAVED TEST RESULTS — OUR MODELS
+=======================================
+
+All values below come from the current saved evaluation artifacts. Metrics are
+test-set results over 20,088 evaluated rows and are rounded to four decimals.
+"Jaccard" is the saved sample-Jaccard score.
+
+
+CVE-TO-CAPEC HIT@K PERFORMANCE
+===============================
+
++-----------------------------------------+--------+--------+--------+
+| Model                                   | Hit@1  | Hit@5  | Hit@10 |
++-----------------------------------------+--------+--------+--------+
+| NN (description only)                   | 0.7467 | 0.8220 | 0.8558 |
+| NN + keywords                           | 0.7406 | 0.8160 | 0.8505 |
+| CWE-to-CAPEC mapping branch             | 0.7678 | 0.8341 | 0.8627 |
+| CGDPF                                   | 0.7779 | 0.8441 | 0.8710 |
+| RAE-XMC                                 | 0.8460 | 0.8900 | 0.9078 |
+| RAE-XMC + CGDPF (Our Approach)          | 0.8405 | 0.8846 | 0.9030 |
++-----------------------------------------+--------+--------+--------+
+
+
+CVE-TO-CAPEC MULTI-LABEL CLASSIFICATION PERFORMANCE
+====================================================
+
++-----------------------------------------+-----------+-------------+----------+----------+-------------+-----------+----------+
+| Model                                   | Threshold | Exact Match | Micro-F1 | Macro-F1 | Weighted-F1 | Sample-F1 | Jaccard  |
++-----------------------------------------+-----------+-------------+----------+----------+-------------+-----------+----------+
+| NN (description only)                   | 0.94      | 0.5092      | 0.6498   | 0.3946   | 0.6538      | 0.6611    | 0.6304   |
+| NN + keywords                           | 0.94      | 0.5066      | 0.6538   | 0.3063   | 0.6569      | 0.6618    | 0.6311   |
+| CWE-to-CAPEC mapping branch             | 0.65      | 0.6055      | 0.6588   | 0.4231   | 0.6593      | 0.6857    | 0.6695   |
+| CGDPF                                   | 0.60      | 0.5617      | 0.6675   | 0.4188   | 0.6756      | 0.6935    | 0.6683   |
+| RAE-XMC                                 | 0.20      | 0.7181      | 0.7469   | 0.4156   | 0.7300      | 0.7737    | 0.7600   |
+| RAE-XMC + CGDPF (Our Approach)          | 0.40      | 0.7074      | 0.7471   | 0.5262   | 0.7388      | 0.7629    | 0.7515   |
++-----------------------------------------+-----------+-------------+----------+----------+-------------+-----------+----------+
+
+
+CVE-TO-CWE HIT@K PERFORMANCE
+=============================
+
++-----------------------------------------+--------+--------+--------+
+| Model                                   | Hit@1  | Hit@5  | Hit@10 |
++-----------------------------------------+--------+--------+--------+
+| NN (description only)                   | 0.7398 | 0.8959 | 0.9368 |
+| NN + keywords                           | 0.7371 | 0.8955 | 0.9371 |
++-----------------------------------------+--------+--------+--------+
+
+
+CVE-TO-CWE AUXILIARY MODEL PERFORMANCE
+=======================================
+
++-----------------------------------------+-----------+-------------+----------+----------+-------------+-----------+----------+
+| Model                                   | Threshold | Exact Match | Micro-F1 | Macro-F1 | Weighted-F1 | Sample-F1 | Jaccard  |
++-----------------------------------------+-----------+-------------+----------+----------+-------------+-----------+----------+
+| NN (description only)                   | 0.98      | 0.6505      | 0.7089   | 0.1478   | 0.6983      | 0.7176    | 0.7006   |
+| NN + keywords                           | 0.98      | 0.6493      | 0.7070   | 0.1421   | 0.6970      | 0.7170    | 0.6998   |
++-----------------------------------------+-----------+-------------+----------+----------+-------------+-----------+----------+
+
+
+RESULT SOURCES
+==============
+
+- NN (CVE-to-CAPEC): 04_evaluation/outputs/NN/metrics.json
+- NN + keywords (CVE-to-CAPEC): 04_evaluation/outputs/NN_2way/metrics.json
+- NN (CVE-to-CWE): 04_evaluation/outputs/CVE_to_CWE/NN_1way/metrics.json
+- NN + keywords (CVE-to-CWE): 04_evaluation/outputs/CVE_to_CWE/NN_2way/metrics.json
+- RAE-XMC: 04_evaluation/outputs/RAE_XMC/test_metrics.json
+- CGDPF: 04_evaluation/outputs/combined/CGDPF_20260912_001152/test_metrics.json
+- CWE-to-CAPEC mapping and Our Approach:
+  04_evaluation/outputs/combined/our_approch_20260912_001437/model_comparison.csv
+
+The Our Approach row is the saved "hybrid_plus_rae_xmc" result. The RAE-XMC
+row uses its standalone test artifact; the latest combined-run recalibration
+produced Hit@1/5/10 = 0.8461/0.8903/0.9084 and classification scores
+Exact/Micro-F1/Macro-F1/Weighted-F1/Sample-F1/Jaccard =
+0.7088/0.7420/0.5191/0.7323/0.7592/0.7489.
+
+
+NO SAVED EVALUATION RESULT
+==========================
+
+- Fine-tuned NN: no metrics artifact was found.
+- Fine-tuned NN + keywords: no metrics artifact was found.
+- Qwen 7B: no current keyword-generation or evaluation artifacts are saved.
+  Run the Stage-03 Qwen keyword method again before evaluating this baseline.

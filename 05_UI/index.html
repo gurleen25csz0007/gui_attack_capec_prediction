@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CAPEC Intelligence</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f1f5f9; --surface: #ffffff; --border: #e2e8f0;
+      --accent: #3b82f6; --accent-dark: #2563eb; --accent-light: #eff6ff;
+      --text: #1e293b; --text-muted: #64748b; --success: #22c55e;
+      --success-bg: #dcfce7; --warning: #f59e0b; --warning-bg: #fef3c7;
+      --danger: #ef4444; --danger-bg: #fee2e2; --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg); color: var(--text); min-height: 100vh;
+      font-size: 16px; line-height: 1.5; }
+    header { background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 28px 24px 16px; min-height: 58px; display: flex; align-items: center;
+      flex-direction: column; gap: 8px; box-shadow: var(--shadow); }
+    .header-left { display: flex; align-items: center; flex-direction: column;
+      width: 100%; gap: 8px; text-align: center; }
+    .status { display: flex; align-items: center; gap: 10px; align-self: flex-end; }
+    header h1 { font-size: clamp(30px, 4vw, 42px); font-weight: 700; line-height: 1.2; }
+    .header-pipe, #status-label { color: var(--text-muted); font-size: 16px; }
+    #status-dot { width: 8px; height: 8px; border-radius: 50%;
+      background: var(--warning); flex-shrink: 0; }
+    #status-dot.ok { background: var(--success); }
+    #status-dot.err { background: var(--danger); }
+    main { max-width: 1040px; margin: 0 auto; padding: 30px 20px 60px; }
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .step-badge { width: 28px; height: 28px; border-radius: 50%; background: var(--accent);
+      color: white; font-size: 16px; font-weight: 700; display: flex;
+      align-items: center; justify-content: center; flex-shrink: 0; }
+    .step-badge.done { background: var(--success); }
+    .section-header h2 { font-size: 22px; }
+    .card { background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+    .input-label { display: block; font-size: 14px; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em;
+      margin-bottom: 7px; }
+    textarea { width: 100%; min-height: 130px; resize: vertical; padding: 13px 14px;
+      border: 1px solid var(--border); border-radius: 9px; color: var(--text);
+      font-family: inherit; font-size: 18px; line-height: 1.55;
+      transition: border-color .15s, box-shadow .15s; }
+    textarea:focus { outline: none; border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.12); }
+    textarea::placeholder { color: #94a3b8; }
+    .help-text { color: var(--text-muted); font-size: 14px; margin: 7px 0 16px; }
+    #run-btn { width: 100%; padding: 13px; background: var(--accent); color: white;
+      border: 0; border-radius: 10px; font-size: 20px; font-weight: 700;
+      cursor: pointer; transition: background .2s, transform .1s; }
+    #run-btn:hover:not(:disabled) { background: var(--accent-dark); }
+    #run-btn:active:not(:disabled) { transform: scale(.99); }
+    #run-btn:disabled { opacity: .55; cursor: not-allowed; }
+    #results { display: none; margin-top: 28px; }
+    .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .result-grid .wide { grid-column: 1 / -1; }
+    .card-title { display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap; font-size: 18px; font-weight: 700; margin-bottom: 15px; }
+    .badge { font-size: 14px; font-weight: 700; padding: 4px 9px; border-radius: 20px;
+      color: #1e40af; background: var(--accent-light); }
+    .badge.good { color: #166534; background: var(--success-bg); }
+    .badge.bad { color: #991b1b; background: var(--danger-bg); }
+    .badge.warn { color: #92400e; background: var(--warning-bg); }
+    .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .metric { padding: 11px; border: 1px solid var(--border); border-radius: 8px;
+      background: #f8fafc; min-width: 0; }
+    .metric-value { font-size: 20px; font-weight: 800; overflow-wrap: anywhere; }
+    .metric-label { color: var(--text-muted); font-size: 13px; margin-top: 3px;
+      text-transform: uppercase; letter-spacing: .04em; }
+    .description { color: #475569; font-size: 16px; line-height: 1.6;
+      margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .original-description { white-space: pre-wrap; overflow-wrap: anywhere; }
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .truth-group + .truth-group { margin-top: 16px; }
+    .truth-label { color: var(--text-muted); font-size: 13px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .05em; margin-bottom: 7px; }
+    .chip { padding: 6px 9px; background: var(--accent-light); border: 1px solid #bfdbfe;
+      border-radius: 7px; color: #1e40af; font-size: 16px; font-weight: 700; }
+    .chip.final { color: #166534; background: var(--success-bg); border-color: #86efac; }
+    .empty, .note { color: var(--text-muted); font-size: 16px; line-height: 1.5; }
+    .evaluation-list { display: grid; gap: 9px; }
+    .eval-row { display: flex; justify-content: space-between; gap: 16px;
+      padding-bottom: 8px; border-bottom: 1px solid #f1f5f9; font-size: 16px; }
+    .eval-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .yes { color: #15803d; font-weight: 800; }
+    .no { color: #dc2626; font-weight: 800; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 16px; }
+    th { text-align: left; padding: 8px 10px; color: var(--text-muted); font-size: 13px;
+      text-transform: uppercase; letter-spacing: .04em; border-bottom: 2px solid var(--border); }
+    td { padding: 9px 10px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    tr:last-child td { border-bottom: 0; }
+    tr.correct td { background: #f0fdf4; }
+    .rank { color: var(--text-muted); width: 38px; }
+    .capec { color: #1e40af; font-weight: 800; }
+    .score { font-variant-numeric: tabular-nums; }
+    .score-bar { width: 120px; height: 5px; border-radius: 4px; background: #e2e8f0;
+      margin-top: 5px; overflow: hidden; }
+    .score-fill { height: 100%; background: var(--accent); border-radius: 4px; }
+    .error { display: none; background: var(--danger-bg); border: 1px solid #fecaca;
+      color: #991b1b; padding: 11px 13px; border-radius: 8px; font-size: 16px;
+      margin-top: 14px; }
+    .note { margin-top: 12px; overflow-wrap: anywhere; }
+    @media (max-width: 720px) {
+      header { padding: 22px 14px 14px; }
+      .header-left { gap: 3px; }
+      .status { padding-top: 3px; }
+      .header-pipe { font-size: 14px; }
+      main { padding: 22px 14px 45px; }
+      .result-grid { grid-template-columns: 1fr; } .result-grid .wide { grid-column: auto; }
+      .meta-grid { grid-template-columns: 1fr 1fr; } .card { padding: 17px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1>CVE → CAPEC Predictor</h1>
+      <span class="header-pipe">Our Approach · Description + keywords</span>
+    </div>
+    <div class="status"><span id="status-dot"></span><span id="status-label">Checking model…</span></div>
+  </header>
+
+  <main>
+    <div class="section-header"><div class="step-badge">1</div><h2>Enter vulnerability</h2></div>
+    <section class="card">
+      <label class="input-label" for="cve-input">CVE ID or CVE description</label>
+      <textarea id="cve-input" placeholder="CVE-2024-10665&#10;&#10;or paste vulnerability description text here…"></textarea>
+      <div class="help-text">Enter a complete CVE ID or paste its exact original description to identify the CVE and its train, validation, or test membership. You can also predict from any vulnerability description. Our Approach uses fresh cleaning and keyword extraction.</div>
+      <div id="dataset-status" class="help-text" role="status">Checking CVE dataset connection…</div>
+      <button id="run-btn" disabled>▶ Predict CAPEC</button>
+      <div id="error" class="error"></div>
+    </section>
+
+    <section id="results">
+      <div class="section-header"><div class="step-badge done">2</div><h2>Prediction results</h2></div>
+      <div class="result-grid">
+        <article class="card wide" id="input-summary"></article>
+        <article class="card wide" id="final-prediction"></article>
+        <article class="card" id="ground-truth"></article>
+        <article class="card" id="evaluation"></article>
+        <article class="card wide" id="predictions"></article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const input = document.getElementById('cve-input');
+    const button = document.getElementById('run-btn');
+    const errorBox = document.getElementById('error');
+    const results = document.getElementById('results');
+
+    const esc = value => String(value ?? '').replace(/[&<>'"]/g, character => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    })[character]);
+    const yesNo = value => `<span class="${value ? 'yes' : 'no'}">${value ? '✓ Yes' : '✕ No'}</span>`;
+
+    async function checkHealth() {
+      const dot = document.getElementById('status-dot');
+      const label = document.getElementById('status-label');
+      const datasetLabel = document.getElementById('dataset-status');
+      if (location.protocol === 'file:') {
+        dot.className = 'err';
+        label.textContent = 'Start the UI server';
+        datasetLabel.textContent = 'Dataset lookup requires the Python server. Run server.py from 05_UI, then open http://127.0.0.1:8000.';
+        button.disabled = true;
+        return;
+      }
+      try {
+        const response = await fetch('/health');
+        if (!response.ok) throw new Error('Health request failed');
+        const health = await response.json();
+        datasetLabel.textContent = health.dataset_status === 'connected'
+          ? `CVE dataset connected · ${Number(health.cve_records).toLocaleString()} IDs available for exact lookup`
+          : health.status === 'loading'
+            ? 'CVE dataset loading…'
+            : `CVE dataset unavailable · ${health.dataset_error || 'No CVE records loaded.'} You can paste a description when the model is ready.`;
+        if (health.status === 'ready') {
+          dot.className = 'ok';
+          label.textContent = `Ready · ${String(health.device || 'model').toUpperCase()}`;
+          button.disabled = false;
+        } else if (health.status === 'loading') {
+          label.textContent = 'Model loading…';
+          setTimeout(checkHealth, 1500);
+        } else {
+          dot.className = 'err';
+          label.textContent = 'Model not configured';
+          errorBox.textContent = health.message || 'The model could not be loaded. Check the server terminal.';
+          button.disabled = true;
+        }
+      } catch (_) {
+        dot.className = 'err';
+        label.textContent = 'Server unavailable';
+        datasetLabel.textContent = 'CVE dataset connection unavailable. Start server.py and open http://127.0.0.1:8000.';
+        button.disabled = true;
+      }
+    }
+
+    function render(data) {
+      const model = data.model;
+      const keywords = Array.isArray(data.keywords) ? data.keywords : [];
+      const splitLabels = {
+        train: 'Train', validation: 'Validation', test: 'Test',
+        not_in_model_splits: 'Dataset only', unavailable: 'Unavailable'
+      };
+      const splitLabel = data.resolved_cve_id
+        ? (splitLabels[data.dataset_split] || 'Unavailable') : 'Not applicable';
+      document.getElementById('input-summary').innerHTML = `
+        <div class="card-title"><span>Resolved input</span><span class="badge">${esc(data.input_type.replaceAll('_', ' '))}</span></div>
+        <div class="meta-grid">
+          <div class="metric"><div class="metric-value">${esc(data.resolved_cve_id || 'Free text')}</div><div class="metric-label">CVE</div></div>
+          <div class="metric"><div class="metric-value">${data.resolved_cve_id ? (data.dataset_match_type === 'description' ? 'Exact description match' : 'Exact ID match') : 'Free text'}</div><div class="metric-label">Dataset lookup</div></div>
+          <div class="metric"><div class="metric-value">${esc(splitLabel)}</div><div class="metric-label">Dataset split</div></div>
+          <div class="metric"><div class="metric-value">Our Approach</div><div class="metric-label">Prediction model</div></div>
+          <div class="metric"><div class="metric-value">Description + keywords</div><div class="metric-label">Model input</div></div>
+          <div class="metric"><div class="metric-value">${Number(model.threshold).toFixed(2)}</div><div class="metric-label">Validation threshold</div></div>
+        </div>
+        ${data.resolved_cve_id && data.dataset_split === 'not_in_model_splits' ? '<div class="note">This CVE is in the dataset but absent from the model splits.</div>' : ''}
+        ${data.resolved_cve_id && data.dataset_split === 'unavailable' ? '<div class="note">Dataset membership is unavailable.</div>' : ''}
+        ${data.description ? `<div class="description"><div class="truth-label">${data.resolved_cve_id ? `Exact dataset description for ${esc(data.resolved_cve_id)}` : 'Original description'}</div><div class="original-description">${esc(data.description)}</div></div>` : ''}
+        ${data.cleaned_description ? `<div class="description"><div class="truth-label">Cleaned description used by Our Approach</div>${esc(data.cleaned_description)}</div>` : ''}
+        <div class="description"><div class="truth-label">Keywords used by Our Approach</div>
+          <div class="chips">${keywords.length ? keywords.map(keyword => `<span class="chip">${esc(keyword)}</span>`).join('') : '<span class="empty">No keyword was extracted.</span>'}</div>
+          <div class="note">These keywords are freshly extracted from the cleaned description and supplied to the prediction model.</div>
+        </div>`;
+
+      const selected = Array.isArray(data.threshold_predictions) ? data.threshold_predictions : [];
+      const exactBadge = data.evaluation
+        ? `<span class="badge ${data.evaluation.threshold_exact_match ? 'good' : 'bad'}">${data.evaluation.threshold_exact_match ? 'Exact match' : 'Not exact match'}</span>`
+        : '<span class="badge">Final output</span>';
+      document.getElementById('final-prediction').innerHTML = `
+        <div class="card-title"><span>Final threshold-selected CAPEC set</span>${exactBadge}</div>
+        <div class="chips">${selected.length
+          ? selected.map(label => `<span class="chip final">${esc(label)}</span>`).join('')
+          : '<span class="empty">No real CAPEC label crossed the selected threshold.</span>'}</div>
+        <div class="note">Labels at or above the validation-selected threshold (${Number(model.threshold).toFixed(2)}) form the prediction. Within CGDPF, α=${Number(model.alpha).toFixed(2)} weights direct-CAPEC scores and 1−α weights CWE-mapped scores. The final fusion with keywords weights RAE-XMC by β=${Number(model.beta).toFixed(2)} and CGDPF by 1−β.</div>`;
+
+      const gt = Array.isArray(data.ground_truth_capecs) ? data.ground_truth_capecs : [];
+      const trueCwes = Array.isArray(data.ground_truth_cwes) ? data.ground_truth_cwes : [];
+      const hasDatasetTruth = gt.length > 0 || trueCwes.length > 0;
+      document.getElementById('ground-truth').innerHTML = hasDatasetTruth ? `
+        <div class="card-title"><span>Dataset ground truth</span><span class="badge good">Available</span></div>
+        <div class="truth-group"><div class="truth-label">Correct CWE${trueCwes.length === 1 ? '' : 's'}</div><div class="chips">${trueCwes.length ? trueCwes.map(label => `<span class="chip">${esc(label)}</span>`).join('') : '<span class="empty">No CWE label</span>'}</div></div>
+        <div class="truth-group"><div class="truth-label">Correct CAPEC${gt.length === 1 ? '' : 's'}</div><div class="chips">${gt.length ? gt.map(label => `<span class="chip">${esc(label)}</span>`).join('') : '<span class="empty">No real CAPEC label</span>'}</div></div>` : `
+        <div class="card-title"><span>Dataset ground truth</span><span class="badge warn">Unavailable</span></div>
+        <div class="empty">This input was not matched to a dataset row, so exact-match accuracy cannot be calculated.</div>`;
+
+      const evaluation = data.evaluation;
+      document.getElementById('evaluation').innerHTML = evaluation ? `
+        <div class="card-title"><span>Accuracy check</span><span class="badge ${evaluation.threshold_exact_match ? 'good' : 'bad'}">${evaluation.threshold_exact_match ? 'Exact set match' : 'Set differs'}</span></div>
+        <div class="evaluation-list">
+          <div class="eval-row"><span>Threshold set exactly matches truth</span>${yesNo(evaluation.threshold_exact_match)}</div>
+          <div class="eval-row"><span>Threshold set contains a correct label</span>${yesNo(evaluation.threshold_any_hit)}</div>
+          <div class="eval-row"><span>Top-1 candidate is correct</span>${yesNo(evaluation.top_1_correct)}</div>
+          <div class="eval-row"><span>Correct label appears in Top-5</span>${yesNo(evaluation.top_5_hit)}</div>
+          <div class="eval-row"><span>Correct label appears in Top-10</span>${yesNo(evaluation.top_10_hit)}</div>
+        </div>` : `
+        <div class="card-title"><span>Accuracy check</span><span class="badge warn">Not evaluated</span></div>
+        <div class="empty">Accuracy is shown only when dataset ground-truth labels are available.</div>`;
+
+      const predictions = Array.isArray(data.predictions) ? data.predictions : [];
+      const truthSet = new Set(gt);
+      const selectedSet = new Set(selected);
+      const rows = predictions.map((prediction, index) => {
+        const score = Number(prediction.score || 0);
+        return `<tr class="${truthSet.has(prediction.capec_id) ? 'correct' : ''}">
+          <td class="rank">${index + 1}</td>
+          <td><span class="capec">${esc(prediction.capec_id)}</span>${selectedSet.has(prediction.capec_id) ? ' <span class="yes">✓ above threshold</span>' : ''}${truthSet.has(prediction.capec_id) ? ' <span class="yes">✓ correct</span>' : ''}</td>
+          <td class="score">${score.toFixed(6)}<div class="score-bar"><div class="score-fill" style="width:${Math.max(0, Math.min(100, score * 100))}%"></div></div></td>
+        </tr>`;
+      }).join('');
+      document.getElementById('predictions').innerHTML = `
+        <div class="card-title"><span>Top-10 ranked candidates</span><span class="badge">Supporting ranking</span></div>
+        <div class="table-wrap"><table><thead><tr><th>#</th><th>CAPEC</th><th>Final fusion score</th></tr></thead><tbody>${rows}</tbody></table></div>
+        <div class="note">Higher scores indicate stronger relevance. This table also shows lower-ranked alternatives below the ${Number(model.threshold).toFixed(2)} cutoff; green rows match dataset truth.</div>`;
+      results.style.display = 'block';
+      results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    async function predict() {
+      const value = input.value.trim();
+      errorBox.style.display = 'none';
+      if (!value) {
+        errorBox.textContent = 'Enter a CVE ID or vulnerability description.';
+        errorBox.style.display = 'block';
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = '⟳ Predicting…';
+      try {
+        const response = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ input: value, top_k: 10 })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Prediction failed.');
+        render(data);
+      } catch (error) {
+        errorBox.textContent = error.message;
+        errorBox.style.display = 'block';
+        results.style.display = 'none';
+      } finally {
+        button.disabled = false;
+        button.textContent = '▶ Predict CAPEC';
+      }
+    }
+
+    button.addEventListener('click', predict);
+    input.addEventListener('keydown', event => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') predict();
+    });
+    checkHealth();
+  </script>
+</body>
+</html>

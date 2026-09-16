@@ -1,0 +1,560 @@
+capec,name,parent,child
+CAPEC-1,accessing functionality not properly constrained by acls,CAPEC-122,CAPEC-58; CAPEC-679; CAPEC-680; CAPEC-681
+CAPEC-2,inducing account lockout,CAPEC-212,
+CAPEC-3,using leading 'ghost' character sequences to bypass input filters,CAPEC-267,
+CAPEC-4,using alternative ip address encodings,CAPEC-267,
+CAPEC-5,blue boxing,CAPEC-220,
+CAPEC-6,argument injection,CAPEC-137,
+CAPEC-7,blind sql injection,CAPEC-66,
+CAPEC-8,buffer overflow in an api call,CAPEC-100,
+CAPEC-9,buffer overflow in local command-line utilities,CAPEC-100,
+CAPEC-10,buffer overflow via environment variables,CAPEC-100,
+CAPEC-11,cause web server misclassification,CAPEC-635,
+CAPEC-12,choosing message identifier,CAPEC-216,
+CAPEC-13,subverting environment variable values,CAPEC-77,
+CAPEC-14,client-side injection-induced buffer overflow,CAPEC-100,
+CAPEC-15,command delimiters,CAPEC-137,CAPEC-460
+CAPEC-16,dictionary-based password attack,CAPEC-49,
+CAPEC-17,using malicious files,CAPEC-122,CAPEC-177; CAPEC-263; CAPEC-562; CAPEC-563; CAPEC-642; CAPEC-650
+CAPEC-18,xss targeting non-script elements,CAPEC-588; CAPEC-591; CAPEC-592,
+CAPEC-19,embedding scripts within scripts,CAPEC-242,
+CAPEC-20,encryption brute forcing,CAPEC-112,
+CAPEC-21,exploitation of trusted identifiers,,CAPEC-62; CAPEC-196; CAPEC-510; CAPEC-593
+CAPEC-22,exploiting trust in client,,CAPEC-39; CAPEC-77; CAPEC-202; CAPEC-207
+CAPEC-23,file content injection,CAPEC-242,CAPEC-44
+CAPEC-24,filter failure through buffer overflow,CAPEC-100,
+CAPEC-25,forced deadlock,,
+CAPEC-26,leveraging race conditions,,CAPEC-29
+CAPEC-27,leveraging race conditions via symbolic links,CAPEC-29,
+CAPEC-28,fuzzing,,CAPEC-215
+CAPEC-29,leveraging time-of-check and time-of-use (toctou) race conditions,CAPEC-26,CAPEC-27
+CAPEC-30,hijacking a privileged thread of execution,CAPEC-233,
+CAPEC-31,accessing/intercepting/modifying http cookies,CAPEC-39; CAPEC-157,
+CAPEC-32,xss through http query strings,CAPEC-588; CAPEC-591; CAPEC-592,
+CAPEC-33,http request smuggling,CAPEC-220,
+CAPEC-34,http response splitting,CAPEC-220,
+CAPEC-35,leverage executable code in non-executable files,CAPEC-636,
+CAPEC-36,using unpublished interfaces or functionality,CAPEC-113,
+CAPEC-37,retrieve embedded sensitive data,CAPEC-167,
+CAPEC-38,leveraging/manipulating configuration file search paths,CAPEC-159,
+CAPEC-39,manipulating opaque client-based data tokens,CAPEC-22,CAPEC-31
+CAPEC-40,manipulating writeable terminal devices,CAPEC-248,
+CAPEC-41,using meta-characters in e-mail headers to inject malicious payloads,CAPEC-134; CAPEC-242,
+CAPEC-42,mime conversion,CAPEC-100,
+CAPEC-43,exploiting multiple input interpretation layers,CAPEC-267,
+CAPEC-44,overflow binary resource file,CAPEC-23; CAPEC-100,
+CAPEC-45,buffer overflow via symbolic links,CAPEC-100,
+CAPEC-46,overflow variables and tags,CAPEC-100,
+CAPEC-47,buffer overflow via parameter expansion,CAPEC-100,
+CAPEC-48,passing local filenames to functions that expect a url,CAPEC-212,
+CAPEC-49,password brute forcing,CAPEC-112,CAPEC-16; CAPEC-55; CAPEC-70; CAPEC-565
+CAPEC-50,password recovery exploitation,CAPEC-212,
+CAPEC-51,poison web service registry,CAPEC-203,
+CAPEC-52,embedding null bytes,CAPEC-267,
+CAPEC-53,"postfix, null terminate, and backslash",CAPEC-267,
+CAPEC-54,query system for information,CAPEC-116,CAPEC-95; CAPEC-127; CAPEC-215; CAPEC-261; CAPEC-462
+CAPEC-55,rainbow table password cracking,CAPEC-49,
+CAPEC-57,utilizing rest's trust in the system resource to obtain sensitive data,CAPEC-157,
+CAPEC-58,restful privilege elevation,CAPEC-1; CAPEC-180,
+CAPEC-59,session credential falsification through prediction,CAPEC-196,
+CAPEC-60,reusing session ids (aka session replay),CAPEC-593,
+CAPEC-61,session fixation,CAPEC-593,
+CAPEC-62,cross site request forgery,CAPEC-21,CAPEC-467
+CAPEC-63,cross-site scripting (xss),CAPEC-242,CAPEC-588; CAPEC-591; CAPEC-592
+CAPEC-64,using slashes and url encoding combined to bypass validation logic,CAPEC-267,
+CAPEC-65,sniff application code,CAPEC-157,
+CAPEC-66,sql injection,CAPEC-248,CAPEC-7; CAPEC-108; CAPEC-109; CAPEC-110; CAPEC-470
+CAPEC-67,string format overflow in syslog(),CAPEC-100; CAPEC-135,
+CAPEC-68,subvert code-signing facilities,CAPEC-233,
+CAPEC-69,target programs with elevated privileges,CAPEC-233,
+CAPEC-70,try common or default usernames and passwords,CAPEC-49,
+CAPEC-71,using unicode encoding to bypass validation logic,CAPEC-267,
+CAPEC-72,url encoding,CAPEC-267,
+CAPEC-73,user-controlled filename,CAPEC-165,
+CAPEC-74,manipulating state,,CAPEC-140; CAPEC-663
+CAPEC-75,manipulating writeable configuration files,CAPEC-176,
+CAPEC-76,manipulating web input to file system calls,CAPEC-126,
+CAPEC-77,manipulating user-controlled variables,CAPEC-22,CAPEC-13; CAPEC-162
+CAPEC-78,using escaped slashes in alternate encoding,CAPEC-267,
+CAPEC-79,using slashes in alternate encoding,CAPEC-267,
+CAPEC-80,using utf-8 encoding to bypass validation logic,CAPEC-267,
+CAPEC-81,web server logs tampering,CAPEC-268,
+CAPEC-83,xpath injection,CAPEC-250,
+CAPEC-84,xquery injection,CAPEC-250,
+CAPEC-85,ajax footprinting,CAPEC-580,
+CAPEC-86,xss through http headers,CAPEC-588; CAPEC-591; CAPEC-592,
+CAPEC-87,forceful browsing,CAPEC-115,
+CAPEC-88,os command injection,CAPEC-248,
+CAPEC-89,pharming,CAPEC-151,
+CAPEC-90,reflection attack in authentication protocol,CAPEC-114; CAPEC-272,
+CAPEC-92,forced integer overflow,CAPEC-128,
+CAPEC-93,log injection-tampering-forging,CAPEC-268,
+CAPEC-94,adversary in the middle (aitm),,CAPEC-219; CAPEC-384; CAPEC-386; CAPEC-466; CAPEC-662; CAPEC-701
+CAPEC-95,wsdl scanning,CAPEC-54,
+CAPEC-96,block access to libraries,CAPEC-603,
+CAPEC-97,cryptanalysis,CAPEC-192,CAPEC-463; CAPEC-608
+CAPEC-98,phishing,CAPEC-151,CAPEC-163; CAPEC-164; CAPEC-656
+CAPEC-100,overflow buffers,CAPEC-123,CAPEC-8; CAPEC-9; CAPEC-10; CAPEC-14; CAPEC-24; CAPEC-42; CAPEC-44; CAPEC-45; CAPEC-46; CAPEC-47; CAPEC-67; CAPEC-256
+CAPEC-101,server side include (ssi) injection,CAPEC-253,
+CAPEC-102,session sidejacking,CAPEC-593,
+CAPEC-103,clickjacking,CAPEC-173,CAPEC-181; CAPEC-222; CAPEC-587
+CAPEC-104,cross zone scripting,CAPEC-233,
+CAPEC-105,http request splitting,CAPEC-220,
+CAPEC-107,cross site tracing,CAPEC-593,
+CAPEC-108,command line execution through sql injection,CAPEC-66,
+CAPEC-109,object relational mapping injection,CAPEC-66,
+CAPEC-110,sql injection through soap parameter tampering,CAPEC-66,
+CAPEC-111,json hijacking (aka javascript hijacking),CAPEC-212,
+CAPEC-112,brute force,,CAPEC-20; CAPEC-49
+CAPEC-113,interface manipulation,,CAPEC-36; CAPEC-121; CAPEC-133; CAPEC-160
+CAPEC-114,authentication abuse,,CAPEC-90
+CAPEC-115,authentication bypass,,CAPEC-87; CAPEC-461; CAPEC-480; CAPEC-664; CAPEC-668
+CAPEC-116,excavation,,CAPEC-54; CAPEC-150; CAPEC-545; CAPEC-569; CAPEC-675
+CAPEC-117,interception,,CAPEC-157; CAPEC-499; CAPEC-651
+CAPEC-120,double encoding,CAPEC-267,
+CAPEC-121,exploit non-production interfaces,CAPEC-113,CAPEC-661
+CAPEC-122,privilege abuse,,CAPEC-1; CAPEC-17; CAPEC-180; CAPEC-201; CAPEC-503
+CAPEC-123,buffer manipulation,,CAPEC-100; CAPEC-540
+CAPEC-124,shared resource manipulation,,
+CAPEC-125,flooding,,CAPEC-482; CAPEC-486; CAPEC-487; CAPEC-488; CAPEC-489; CAPEC-490; CAPEC-528; CAPEC-666
+CAPEC-126,path traversal,CAPEC-153,CAPEC-76; CAPEC-139; CAPEC-597
+CAPEC-127,directory indexing,CAPEC-54,
+CAPEC-128,integer attacks,CAPEC-153,CAPEC-92
+CAPEC-129,pointer manipulation,,
+CAPEC-130,excessive allocation,,CAPEC-230; CAPEC-231; CAPEC-492; CAPEC-493; CAPEC-494; CAPEC-495; CAPEC-496
+CAPEC-131,resource leak exposure,,
+CAPEC-132,symlink attack,CAPEC-159,
+CAPEC-133,try all common switches,CAPEC-113,
+CAPEC-134,email injection,CAPEC-137,CAPEC-41
+CAPEC-135,format string injection,CAPEC-137,CAPEC-67
+CAPEC-136,ldap injection,CAPEC-248,
+CAPEC-137,parameter injection,,CAPEC-6; CAPEC-15; CAPEC-134; CAPEC-135; CAPEC-138; CAPEC-182
+CAPEC-138,reflection injection,CAPEC-137,
+CAPEC-139,relative path traversal,CAPEC-126,
+CAPEC-140,bypassing of intermediate forms in multiple-form sets,CAPEC-74,
+CAPEC-141,cache poisoning,CAPEC-161,CAPEC-142
+CAPEC-142,dns cache poisoning,CAPEC-141,
+CAPEC-143,detect unpublicized web pages,CAPEC-150,
+CAPEC-144,detect unpublicized web services,CAPEC-150,
+CAPEC-145,checksum spoofing,CAPEC-148,
+CAPEC-146,xml schema poisoning,CAPEC-271,
+CAPEC-147,xml ping of the death,CAPEC-528,
+CAPEC-148,content spoofing,,CAPEC-145; CAPEC-218; CAPEC-502; CAPEC-627
+CAPEC-149,explore for predictable temporary file names,CAPEC-497,
+CAPEC-150,collect data from common resource locations,CAPEC-116,CAPEC-143; CAPEC-144; CAPEC-155; CAPEC-406; CAPEC-637; CAPEC-647; CAPEC-648
+CAPEC-151,identity spoofing,,CAPEC-89; CAPEC-98; CAPEC-194; CAPEC-195; CAPEC-473
+CAPEC-153,input data manipulation,,CAPEC-126; CAPEC-128; CAPEC-267
+CAPEC-154,resource location spoofing,,CAPEC-159; CAPEC-616
+CAPEC-155,screen temporary files for sensitive information,CAPEC-150,
+CAPEC-157,sniffing attacks,CAPEC-117,CAPEC-31; CAPEC-57; CAPEC-65; CAPEC-158; CAPEC-609
+CAPEC-158,sniffing network traffic,CAPEC-157,
+CAPEC-159,redirect access to libraries,CAPEC-154,CAPEC-38; CAPEC-132; CAPEC-471; CAPEC-641
+CAPEC-160,exploit script-based apis,CAPEC-113,
+CAPEC-161,infrastructure manipulation,,CAPEC-141; CAPEC-166; CAPEC-268; CAPEC-481; CAPEC-571; CAPEC-700
+CAPEC-162,manipulating hidden fields,CAPEC-77,
+CAPEC-163,spear phishing,CAPEC-98,
+CAPEC-164,mobile phishing,CAPEC-98,
+CAPEC-165,file manipulation,,CAPEC-73; CAPEC-572; CAPEC-635; CAPEC-636
+CAPEC-166,force the system to reset values,CAPEC-161,
+CAPEC-167,white box reverse engineering,CAPEC-188,CAPEC-37; CAPEC-190; CAPEC-191; CAPEC-204
+CAPEC-168,windows ::data alternate data stream,CAPEC-636,
+CAPEC-169,footprinting,,CAPEC-292; CAPEC-300; CAPEC-309; CAPEC-497; CAPEC-529; CAPEC-573; CAPEC-574; CAPEC-575; CAPEC-576; CAPEC-577; CAPEC-580; CAPEC-646; CAPEC-694
+CAPEC-170,web application fingerprinting,CAPEC-541,
+CAPEC-173,action spoofing,,CAPEC-103; CAPEC-501; CAPEC-504; CAPEC-506
+CAPEC-174,flash parameter injection,CAPEC-182,
+CAPEC-175,code inclusion,,CAPEC-251; CAPEC-253
+CAPEC-176,configuration/environment manipulation,,CAPEC-75; CAPEC-203; CAPEC-271; CAPEC-536; CAPEC-578
+CAPEC-177,create files with the same name as files protected with a higher classification,CAPEC-17,
+CAPEC-178,cross-site flashing,CAPEC-182,
+CAPEC-179,calling micro-services directly,CAPEC-554,
+CAPEC-180,exploiting incorrectly configured access control security levels,CAPEC-122,CAPEC-58; CAPEC-679; CAPEC-680; CAPEC-681; CAPEC-702
+CAPEC-181,flash file overlay,CAPEC-103,
+CAPEC-182,flash injection,CAPEC-137,CAPEC-174; CAPEC-178
+CAPEC-183,imap/smtp command injection,CAPEC-248,
+CAPEC-184,software integrity attack,,CAPEC-185; CAPEC-186; CAPEC-663; CAPEC-669
+CAPEC-185,malicious software download,CAPEC-184,
+CAPEC-186,malicious software update,CAPEC-184,CAPEC-187; CAPEC-533; CAPEC-614; CAPEC-657
+CAPEC-187,malicious automated software update via redirection,CAPEC-186,
+CAPEC-188,reverse engineering,,CAPEC-167; CAPEC-189
+CAPEC-189,black box reverse engineering,CAPEC-188,CAPEC-621; CAPEC-622; CAPEC-623
+CAPEC-190,reverse engineer an executable to expose assumed hidden functionality,CAPEC-167,
+CAPEC-191,read sensitive constants within an executable,CAPEC-167,
+CAPEC-192,protocol analysis,,CAPEC-97
+CAPEC-193,php remote file inclusion,CAPEC-253,
+CAPEC-194,fake the source of data,CAPEC-151,CAPEC-275; CAPEC-543; CAPEC-544; CAPEC-598; CAPEC-633; CAPEC-697
+CAPEC-195,principal spoof,CAPEC-151,CAPEC-599
+CAPEC-196,session credential falsification through forging,CAPEC-21,CAPEC-59; CAPEC-226
+CAPEC-197,exponential data expansion,CAPEC-230,
+CAPEC-198,xss targeting error pages,CAPEC-588; CAPEC-591; CAPEC-592,
+CAPEC-199,xss using alternate syntax,CAPEC-588; CAPEC-591; CAPEC-592,
+CAPEC-200,"removal of filters: input filters, output filters, data masking",CAPEC-207,
+CAPEC-201,serialized data external linking,CAPEC-122; CAPEC-278,
+CAPEC-202,create malicious client,CAPEC-22,
+CAPEC-203,manipulate registry information,CAPEC-176,CAPEC-51; CAPEC-270; CAPEC-478
+CAPEC-204,lifting sensitive data embedded in cache,CAPEC-167,
+CAPEC-206,signing malicious code,CAPEC-444,
+CAPEC-207,removing important client functionality,CAPEC-22,CAPEC-200; CAPEC-208
+CAPEC-208,removing/short-circuiting 'purse' logic: removing/mutating 'cash' decrements,CAPEC-207,
+CAPEC-209,xss using mime type mismatch,CAPEC-592,
+CAPEC-212,functionality misuse,,CAPEC-2; CAPEC-48; CAPEC-50; CAPEC-111; CAPEC-620; CAPEC-682
+CAPEC-215,fuzzing for application mapping,CAPEC-28; CAPEC-54,
+CAPEC-216,communication channel manipulation,,CAPEC-12; CAPEC-217
+CAPEC-217,exploiting incorrectly configured ssl/tls,CAPEC-216,
+CAPEC-218,spoofing of uddi/ebxml messages,CAPEC-148,
+CAPEC-219,xml routing detour attacks,CAPEC-94,
+CAPEC-220,client-server protocol manipulation,CAPEC-272,CAPEC-5; CAPEC-33; CAPEC-34; CAPEC-105; CAPEC-273; CAPEC-274
+CAPEC-221,data serialization external entities blowup,CAPEC-231; CAPEC-278,
+CAPEC-222,iframe overlay,CAPEC-103,
+CAPEC-224,fingerprinting,,CAPEC-312; CAPEC-313; CAPEC-541
+CAPEC-226,session credential falsification through manipulation,CAPEC-196,
+CAPEC-227,sustained client engagement,,CAPEC-469
+CAPEC-228,dtd injection,CAPEC-250,
+CAPEC-229,serialized data parameter blowup,CAPEC-231,
+CAPEC-230,serialized data with nested payloads,CAPEC-130,CAPEC-197; CAPEC-491
+CAPEC-231,oversized serialized data payloads,CAPEC-130,CAPEC-221; CAPEC-229
+CAPEC-233,privilege escalation,,CAPEC-30; CAPEC-68; CAPEC-69; CAPEC-104; CAPEC-234
+CAPEC-234,hijacking a privileged process,CAPEC-233,
+CAPEC-237,escaping a sandbox by calling code in another language,CAPEC-480,
+CAPEC-240,resource injection,,CAPEC-610
+CAPEC-242,code injection,,CAPEC-19; CAPEC-23; CAPEC-41; CAPEC-63; CAPEC-468
+CAPEC-243,xss targeting html attributes,CAPEC-588; CAPEC-591; CAPEC-592,
+CAPEC-244,xss targeting uri placeholders,CAPEC-588; CAPEC-591; CAPEC-592,
+CAPEC-245,xss using doubled characters,CAPEC-588; CAPEC-591; CAPEC-592,
+CAPEC-247,xss using invalid characters,CAPEC-588; CAPEC-591; CAPEC-592,
+CAPEC-248,command injection,,CAPEC-40; CAPEC-66; CAPEC-88; CAPEC-136; CAPEC-183; CAPEC-250; CAPEC-676
+CAPEC-250,xml injection,CAPEC-248,CAPEC-83; CAPEC-84; CAPEC-228
+CAPEC-251,local code inclusion,CAPEC-175,CAPEC-252; CAPEC-640; CAPEC-660
+CAPEC-252,php local file inclusion,CAPEC-251,
+CAPEC-253,remote code inclusion,CAPEC-175,CAPEC-101; CAPEC-193; CAPEC-500
+CAPEC-256,soap array overflow,CAPEC-100,
+CAPEC-261,fuzzing for garnering other adjacent user/sensitive data,CAPEC-54,
+CAPEC-263,force use of corrupted files,CAPEC-17,
+CAPEC-267,leverage alternate encoding,CAPEC-153,CAPEC-3; CAPEC-4; CAPEC-43; CAPEC-52; CAPEC-53; CAPEC-64; CAPEC-71; CAPEC-72; CAPEC-78; CAPEC-79; CAPEC-80; CAPEC-120
+CAPEC-268,audit log manipulation,CAPEC-161,CAPEC-81; CAPEC-93
+CAPEC-270,modification of registry run keys,CAPEC-203,
+CAPEC-271,schema poisoning,CAPEC-176,CAPEC-146
+CAPEC-272,protocol manipulation,,CAPEC-90; CAPEC-220; CAPEC-276; CAPEC-277; CAPEC-278
+CAPEC-273,http response smuggling,CAPEC-220,
+CAPEC-274,http verb tampering,CAPEC-220,
+CAPEC-275,dns rebinding,CAPEC-194,
+CAPEC-276,inter-component protocol manipulation,CAPEC-272,CAPEC-665
+CAPEC-277,data interchange protocol manipulation,CAPEC-272,
+CAPEC-278,web services protocol manipulation,CAPEC-272,CAPEC-201; CAPEC-221; CAPEC-279
+CAPEC-279,soap manipulation,CAPEC-278,
+CAPEC-285,icmp echo request ping,CAPEC-292,
+CAPEC-287,tcp syn scan,CAPEC-300,
+CAPEC-290,enumerate mail exchange (mx) records,CAPEC-309,
+CAPEC-291,dns zone transfers,CAPEC-309,
+CAPEC-292,host discovery,CAPEC-169,CAPEC-285; CAPEC-294; CAPEC-295; CAPEC-296; CAPEC-297; CAPEC-298; CAPEC-299; CAPEC-612; CAPEC-613; CAPEC-618; CAPEC-619
+CAPEC-293,traceroute route enumeration,CAPEC-309,
+CAPEC-294,icmp address mask request,CAPEC-292,
+CAPEC-295,timestamp request,CAPEC-292,
+CAPEC-296,icmp information request,CAPEC-292,
+CAPEC-297,tcp ack ping,CAPEC-292,
+CAPEC-298,udp ping,CAPEC-292,
+CAPEC-299,tcp syn ping,CAPEC-292,
+CAPEC-300,port scanning,CAPEC-169,CAPEC-287; CAPEC-301; CAPEC-302; CAPEC-303; CAPEC-304; CAPEC-305; CAPEC-306; CAPEC-307; CAPEC-308
+CAPEC-301,tcp connect scan,CAPEC-300,
+CAPEC-302,tcp fin scan,CAPEC-300,
+CAPEC-303,tcp xmas scan,CAPEC-300,
+CAPEC-304,tcp null scan,CAPEC-300,
+CAPEC-305,tcp ack scan,CAPEC-300,
+CAPEC-306,tcp window scan,CAPEC-300,
+CAPEC-307,tcp rpc scan,CAPEC-300,
+CAPEC-308,udp scan,CAPEC-300,
+CAPEC-309,network topology mapping,CAPEC-169,CAPEC-290; CAPEC-291; CAPEC-293; CAPEC-643
+CAPEC-310,scanning for vulnerable software,CAPEC-541,
+CAPEC-312,active os fingerprinting,CAPEC-224,CAPEC-317; CAPEC-318; CAPEC-319; CAPEC-320; CAPEC-321; CAPEC-322; CAPEC-323; CAPEC-324; CAPEC-325; CAPEC-326; CAPEC-327; CAPEC-328; CAPEC-329; CAPEC-330; CAPEC-331; CAPEC-332
+CAPEC-313,passive os fingerprinting,CAPEC-224,
+CAPEC-317,ip id sequencing probe,CAPEC-312,
+CAPEC-318,ip 'id' echoed byte-order probe,CAPEC-312,
+CAPEC-319,ip (df) 'don't fragment bit' echoing probe,CAPEC-312,
+CAPEC-320,tcp timestamp probe,CAPEC-312,
+CAPEC-321,tcp sequence number probe,CAPEC-312,
+CAPEC-322,tcp (isn) greatest common divisor probe,CAPEC-312,
+CAPEC-323,tcp (isn) counter rate probe,CAPEC-312,
+CAPEC-324,tcp (isn) sequence predictability probe,CAPEC-312,
+CAPEC-325,tcp congestion control flag (ecn) probe,CAPEC-312,
+CAPEC-326,tcp initial window size probe,CAPEC-312,
+CAPEC-327,tcp options probe,CAPEC-312,
+CAPEC-328,tcp 'rst' flag checksum probe,CAPEC-312,
+CAPEC-329,icmp error message quoting probe,CAPEC-312,
+CAPEC-330,icmp error message echoing integrity probe,CAPEC-312,
+CAPEC-331,icmp ip total length field probe,CAPEC-312,
+CAPEC-332,icmp ip 'id' field error message probe,CAPEC-312,
+CAPEC-383,harvesting information via api event monitoring,CAPEC-407,
+CAPEC-384,application api message manipulation via man-in-the-middle,CAPEC-94,CAPEC-385; CAPEC-389
+CAPEC-385,transaction or event tampering via application api manipulation,CAPEC-384,
+CAPEC-386,application api navigation remapping,CAPEC-94,CAPEC-387; CAPEC-388
+CAPEC-387,navigation remapping to propagate malicious content,CAPEC-386,
+CAPEC-388,application api button hijacking,CAPEC-386,
+CAPEC-389,content spoofing via application api manipulation,CAPEC-384,
+CAPEC-390,bypassing physical security,,CAPEC-391; CAPEC-395
+CAPEC-391,bypassing physical locks,CAPEC-390,CAPEC-392; CAPEC-393; CAPEC-394
+CAPEC-392,lock bumping,CAPEC-391,
+CAPEC-393,lock picking,CAPEC-391,
+CAPEC-394,using a snap gun lock to force a lock,CAPEC-391,
+CAPEC-395,bypassing electronic locks and access controls,CAPEC-390,CAPEC-397; CAPEC-398; CAPEC-399; CAPEC-400; CAPEC-626
+CAPEC-397,cloning magnetic strip cards,CAPEC-395,
+CAPEC-398,magnetic strip card brute force attacks,CAPEC-395,
+CAPEC-399,cloning rfid cards or chips,CAPEC-395,
+CAPEC-400,rfid chip deactivation or destruction,CAPEC-395,
+CAPEC-401,physically hacking hardware,CAPEC-440,CAPEC-402
+CAPEC-402,bypassing ata password security,CAPEC-401,
+CAPEC-406,dumpster diving,CAPEC-150,
+CAPEC-407,pretexting,CAPEC-410; CAPEC-416,CAPEC-383; CAPEC-412; CAPEC-413; CAPEC-414; CAPEC-415
+CAPEC-410,information elicitation,,CAPEC-407
+CAPEC-412,pretexting via customer service,CAPEC-407,
+CAPEC-413,pretexting via tech support,CAPEC-407,
+CAPEC-414,pretexting via delivery person,CAPEC-407,
+CAPEC-415,pretexting via phone,CAPEC-407,
+CAPEC-416,manipulate human behavior,,CAPEC-407; CAPEC-417; CAPEC-425; CAPEC-426; CAPEC-427
+CAPEC-417,influence perception,CAPEC-416,CAPEC-418; CAPEC-420; CAPEC-421; CAPEC-422; CAPEC-423; CAPEC-424
+CAPEC-418,influence perception of reciprocation,CAPEC-417,
+CAPEC-420,influence perception of scarcity,CAPEC-417,
+CAPEC-421,influence perception of authority,CAPEC-417,
+CAPEC-422,influence perception of commitment and consistency,CAPEC-417,
+CAPEC-423,influence perception of liking,CAPEC-417,
+CAPEC-424,influence perception of consensus or social proof,CAPEC-417,
+CAPEC-425,target influence via framing,CAPEC-416,
+CAPEC-426,influence via incentives,CAPEC-416,
+CAPEC-427,influence via psychological principles,CAPEC-416,CAPEC-428; CAPEC-429; CAPEC-433; CAPEC-434; CAPEC-435
+CAPEC-428,influence via modes of thinking,CAPEC-427,
+CAPEC-429,target influence via eye cues,CAPEC-427,
+CAPEC-433,target influence via the human buffer overflow,CAPEC-427,
+CAPEC-434,target influence via interview and interrogation,CAPEC-427,
+CAPEC-435,target influence via instant rapport,CAPEC-427,
+CAPEC-438,modification during manufacture,,CAPEC-444; CAPEC-447
+CAPEC-439,manipulation during distribution,,CAPEC-522; CAPEC-523; CAPEC-524
+CAPEC-440,hardware integrity attack,,CAPEC-401; CAPEC-534
+CAPEC-441,malicious logic insertion,,CAPEC-442; CAPEC-452; CAPEC-456
+CAPEC-442,infected software,CAPEC-441,CAPEC-448
+CAPEC-443,malicious logic inserted into product by authorized developer,CAPEC-444,
+CAPEC-444,development alteration,CAPEC-438,CAPEC-206; CAPEC-443; CAPEC-445; CAPEC-446; CAPEC-511; CAPEC-516; CAPEC-520; CAPEC-532; CAPEC-537; CAPEC-538; CAPEC-539; CAPEC-670; CAPEC-672; CAPEC-673; CAPEC-678
+CAPEC-445,malicious logic insertion into product software via configuration management manipulation,CAPEC-444,
+CAPEC-446,malicious logic insertion into product via inclusion of third-party component,CAPEC-444,
+CAPEC-447,design alteration,CAPEC-438,CAPEC-517; CAPEC-518; CAPEC-519; CAPEC-521; CAPEC-671; CAPEC-674
+CAPEC-448,embed virus into dll,CAPEC-442,
+CAPEC-452,infected hardware,CAPEC-441,CAPEC-638
+CAPEC-456,infected memory,CAPEC-441,CAPEC-457; CAPEC-458
+CAPEC-457,usb memory attacks,CAPEC-456,
+CAPEC-458,flash memory attacks,CAPEC-456,
+CAPEC-459,creating a rogue certification authority certificate,CAPEC-473,
+CAPEC-460,http parameter pollution (hpp),CAPEC-15,
+CAPEC-461,web services api signature forgery leveraging hash function extension weakness,CAPEC-115,
+CAPEC-462,cross-domain search timing,CAPEC-54,
+CAPEC-463,padding oracle crypto attack,CAPEC-97,
+CAPEC-464,evercookie,CAPEC-554,
+CAPEC-465,transparent proxy abuse,CAPEC-554,
+CAPEC-466,leveraging active adversary in the middle attacks to bypass same origin policy,CAPEC-94,
+CAPEC-467,cross site identification,CAPEC-62,
+CAPEC-468,generic cross-browser cross-domain theft,CAPEC-242,
+CAPEC-469,http dos,CAPEC-227,
+CAPEC-470,expanding control over the operating system from the database,CAPEC-66,
+CAPEC-471,search order hijacking,CAPEC-159,
+CAPEC-472,browser fingerprinting,CAPEC-541,
+CAPEC-473,signature spoof,CAPEC-151,CAPEC-459; CAPEC-474; CAPEC-475; CAPEC-476; CAPEC-477; CAPEC-479; CAPEC-485
+CAPEC-474,signature spoofing by key theft,CAPEC-473,
+CAPEC-475,signature spoofing by improper validation,CAPEC-473,
+CAPEC-476,signature spoofing by misrepresentation,CAPEC-473,
+CAPEC-477,signature spoofing by mixing signed and unsigned content,CAPEC-473,
+CAPEC-478,modification of windows service configuration,CAPEC-203,
+CAPEC-479,malicious root certificate,CAPEC-473,
+CAPEC-480,escaping virtualization,CAPEC-115,CAPEC-237
+CAPEC-481,contradictory destinations in traffic routing schemes,CAPEC-161,
+CAPEC-482,tcp flood,CAPEC-125,
+CAPEC-485,signature spoofing by key recreation,CAPEC-473,
+CAPEC-486,udp flood,CAPEC-125,
+CAPEC-487,icmp flood,CAPEC-125,
+CAPEC-488,http flood,CAPEC-125,
+CAPEC-489,ssl flood,CAPEC-125,
+CAPEC-490,amplification,CAPEC-125,
+CAPEC-491,quadratic data expansion,CAPEC-230,
+CAPEC-492,regular expression exponential blowup,CAPEC-130,
+CAPEC-493,soap array blowup,CAPEC-130,
+CAPEC-494,tcp fragmentation,CAPEC-130,
+CAPEC-495,udp fragmentation,CAPEC-130,
+CAPEC-496,icmp fragmentation,CAPEC-130,
+CAPEC-497,file discovery,CAPEC-169,CAPEC-149
+CAPEC-498,probe ios screenshots,CAPEC-545,
+CAPEC-499,android intent intercept,CAPEC-117,CAPEC-501
+CAPEC-500,webview injection,CAPEC-253,
+CAPEC-501,android activity hijack,CAPEC-173; CAPEC-499,
+CAPEC-502,intent spoof,CAPEC-148,
+CAPEC-503,webview exposure,CAPEC-122,
+CAPEC-504,task impersonation,CAPEC-173,CAPEC-654
+CAPEC-505,scheme squatting,CAPEC-616,
+CAPEC-506,tapjacking,CAPEC-173,
+CAPEC-507,physical theft,,
+CAPEC-508,shoulder surfing,CAPEC-651,
+CAPEC-509,kerberoasting,CAPEC-652,
+CAPEC-510,saas user request forgery,CAPEC-21,
+CAPEC-511,infiltration of software development environment,CAPEC-444,
+CAPEC-516,hardware component substitution during baselining,CAPEC-444,
+CAPEC-517,documentation alteration to circumvent dial-down,CAPEC-447,
+CAPEC-518,documentation alteration to produce under-performing systems,CAPEC-447,
+CAPEC-519,documentation alteration to cause errors in system design,CAPEC-447,
+CAPEC-520,counterfeit hardware component inserted during product assembly,CAPEC-444,
+CAPEC-521,hardware design specifications are altered,CAPEC-447,
+CAPEC-522,malicious hardware component replacement,CAPEC-439,
+CAPEC-523,malicious software implanted,CAPEC-439,
+CAPEC-524,rogue integration procedures,CAPEC-439,
+CAPEC-528,xml flood,CAPEC-125,CAPEC-147
+CAPEC-529,malware-directed internal reconnaissance,CAPEC-169,
+CAPEC-530,provide counterfeit component,CAPEC-531,
+CAPEC-531,hardware component substitution,CAPEC-534,CAPEC-530; CAPEC-535
+CAPEC-532,altered installed bios,CAPEC-444,
+CAPEC-533,malicious manual software update,CAPEC-186,
+CAPEC-534,malicious hardware update,CAPEC-440,CAPEC-531; CAPEC-677
+CAPEC-535,malicious gray market hardware,CAPEC-531,
+CAPEC-536,data injected during configuration,CAPEC-176,
+CAPEC-537,infiltration of hardware development environment,CAPEC-444,
+CAPEC-538,open-source library manipulation,CAPEC-444,
+CAPEC-539,asic with malicious functionality,CAPEC-444,
+CAPEC-540,overread buffers,CAPEC-123,
+CAPEC-541,application fingerprinting,CAPEC-224,CAPEC-170; CAPEC-310; CAPEC-472
+CAPEC-542,targeted malware,CAPEC-549,CAPEC-550; CAPEC-551; CAPEC-552; CAPEC-556; CAPEC-558; CAPEC-564; CAPEC-579; CAPEC-698
+CAPEC-543,counterfeit websites,CAPEC-194,
+CAPEC-544,counterfeit organizations,CAPEC-194,
+CAPEC-545,pull data from system resources,CAPEC-116,CAPEC-498; CAPEC-546; CAPEC-634; CAPEC-639
+CAPEC-546,incomplete data deletion in a multi-tenant environment,CAPEC-545,
+CAPEC-547,physical destruction of device or component,CAPEC-607,
+CAPEC-548,contaminate resource,,
+CAPEC-549,local execution of code,,CAPEC-542
+CAPEC-550,install new service,CAPEC-542,
+CAPEC-551,modify existing service,CAPEC-542,
+CAPEC-552,install rootkit,CAPEC-542,
+CAPEC-554,functionality bypass,,CAPEC-179; CAPEC-464; CAPEC-465
+CAPEC-555,remote services with stolen credentials,CAPEC-560,
+CAPEC-556,replace file extension handlers,CAPEC-542,
+CAPEC-558,replace trusted executable,CAPEC-542,
+CAPEC-559,orbital jamming,CAPEC-601,
+CAPEC-560,use of known domain credentials,,CAPEC-555; CAPEC-600; CAPEC-652; CAPEC-653
+CAPEC-561,windows admin shares with stolen credentials,CAPEC-653,
+CAPEC-562,modify shared file,CAPEC-17,
+CAPEC-563,add malicious file to shared webroot,CAPEC-17,
+CAPEC-564,run software at logon,CAPEC-542,
+CAPEC-565,password spraying,CAPEC-49,
+CAPEC-568,capture credentials via keylogger,CAPEC-569,
+CAPEC-569,collect data as provided by users,CAPEC-116,CAPEC-568
+CAPEC-571,block logging to central repository,CAPEC-161,
+CAPEC-572,artificially inflate file sizes,CAPEC-165,CAPEC-655
+CAPEC-573,process footprinting,CAPEC-169,
+CAPEC-574,services footprinting,CAPEC-169,
+CAPEC-575,account footprinting,CAPEC-169,
+CAPEC-576,group permission footprinting,CAPEC-169,
+CAPEC-577,owner footprinting,CAPEC-169,
+CAPEC-578,disable security software,CAPEC-176,
+CAPEC-579,replace winlogon helper dll,CAPEC-542,
+CAPEC-580,system footprinting,CAPEC-169,CAPEC-85; CAPEC-581
+CAPEC-581,security software footprinting,CAPEC-580,
+CAPEC-582,route disabling,CAPEC-607,CAPEC-583; CAPEC-584; CAPEC-585
+CAPEC-583,disabling network hardware,CAPEC-582,
+CAPEC-584,bgp route disabling,CAPEC-582,
+CAPEC-585,dns domain seizure,CAPEC-582,
+CAPEC-586,object injection,,
+CAPEC-587,cross frame scripting (xfs),CAPEC-103,
+CAPEC-588,dom-based xss,CAPEC-63,CAPEC-18; CAPEC-32; CAPEC-86; CAPEC-198; CAPEC-199; CAPEC-243; CAPEC-244; CAPEC-245; CAPEC-247
+CAPEC-589,dns blocking,CAPEC-603,
+CAPEC-590,ip address blocking,CAPEC-603,
+CAPEC-591,reflected xss,CAPEC-63,CAPEC-18; CAPEC-32; CAPEC-86; CAPEC-198; CAPEC-199; CAPEC-243; CAPEC-244; CAPEC-245; CAPEC-247
+CAPEC-592,stored xss,CAPEC-63,CAPEC-18; CAPEC-32; CAPEC-86; CAPEC-198; CAPEC-199; CAPEC-209; CAPEC-243; CAPEC-244; CAPEC-245; CAPEC-247
+CAPEC-593,session hijacking,CAPEC-21,CAPEC-60; CAPEC-61; CAPEC-102; CAPEC-107
+CAPEC-594,traffic injection,,CAPEC-595
+CAPEC-595,connection reset,CAPEC-594,CAPEC-596
+CAPEC-596,tcp rst injection,CAPEC-595,
+CAPEC-597,absolute path traversal,CAPEC-126,
+CAPEC-598,dns spoofing,CAPEC-194,
+CAPEC-599,terrestrial jamming,CAPEC-195,
+CAPEC-600,credential stuffing,CAPEC-560,
+CAPEC-601,jamming,CAPEC-607,CAPEC-559; CAPEC-604; CAPEC-605
+CAPEC-603,blockage,CAPEC-607,CAPEC-96; CAPEC-589; CAPEC-590
+CAPEC-604,wi-fi jamming,CAPEC-601,
+CAPEC-605,cellular jamming,CAPEC-601,
+CAPEC-606,weakening of cellular encryption,CAPEC-620,
+CAPEC-607,obstruction,,CAPEC-547; CAPEC-582; CAPEC-601; CAPEC-603
+CAPEC-608,cryptanalysis of cellular encryption,CAPEC-97,
+CAPEC-609,cellular traffic intercept,CAPEC-157,
+CAPEC-610,cellular data injection,CAPEC-240,
+CAPEC-611,bitsquatting,CAPEC-616,
+CAPEC-612,wifi mac address tracking,CAPEC-292,
+CAPEC-613,wifi ssid tracking,CAPEC-292,
+CAPEC-614,rooting sim cards,CAPEC-186,
+CAPEC-615,evil twin wi-fi attack,CAPEC-616,
+CAPEC-616,establish rogue location,CAPEC-154,CAPEC-505; CAPEC-611; CAPEC-615; CAPEC-617; CAPEC-630; CAPEC-631; CAPEC-632; CAPEC-667; CAPEC-695
+CAPEC-617,cellular rogue base station,CAPEC-616,
+CAPEC-618,cellular broadcast message request,CAPEC-292,
+CAPEC-619,signal strength tracking,CAPEC-292,
+CAPEC-620,drop encryption level,CAPEC-212,CAPEC-606
+CAPEC-621,analysis of packet timing and sizes,CAPEC-189,
+CAPEC-622,electromagnetic side-channel attack,CAPEC-189,
+CAPEC-623,compromising emanations attack,CAPEC-189,
+CAPEC-624,hardware fault injection,,CAPEC-625
+CAPEC-625,mobile device fault injection,CAPEC-624,
+CAPEC-626,smudge attack,CAPEC-395,
+CAPEC-627,counterfeit gps signals,CAPEC-148,CAPEC-628
+CAPEC-628,carry-off gps attack,CAPEC-627,
+CAPEC-630,typosquatting,CAPEC-616,
+CAPEC-631,soundsquatting,CAPEC-616,
+CAPEC-632,homograph attack via homoglyphs,CAPEC-616,
+CAPEC-633,token impersonation,CAPEC-194,
+CAPEC-634,probe audio and video peripherals,CAPEC-545; CAPEC-651,
+CAPEC-635,alternative execution due to deceptive filenames,CAPEC-165,CAPEC-11; CAPEC-649
+CAPEC-636,hiding malicious data or code within files,CAPEC-165,CAPEC-35; CAPEC-168
+CAPEC-637,collect data from clipboard,CAPEC-150,
+CAPEC-638,altered component firmware,CAPEC-452,
+CAPEC-639,probe system files,CAPEC-545,
+CAPEC-640,inclusion of code in existing process,CAPEC-251,
+CAPEC-641,dll side-loading,CAPEC-159,
+CAPEC-642,replace binaries,CAPEC-17,
+CAPEC-643,identify shared files/directories on system,CAPEC-309,
+CAPEC-644,use of captured hashes (pass the hash),CAPEC-653,
+CAPEC-645,use of captured tickets (pass the ticket),CAPEC-652,
+CAPEC-646,peripheral footprinting,CAPEC-169,
+CAPEC-647,collect data from registries,CAPEC-150,
+CAPEC-648,collect data from screen capture,CAPEC-150,
+CAPEC-649,adding a space to a file extension,CAPEC-635,
+CAPEC-650,upload a web shell to a web server,CAPEC-17,
+CAPEC-651,eavesdropping,CAPEC-117,CAPEC-508; CAPEC-634; CAPEC-699
+CAPEC-652,use of known kerberos credentials,CAPEC-560,CAPEC-509; CAPEC-645
+CAPEC-653,use of known operating system credentials,CAPEC-560,CAPEC-561; CAPEC-644
+CAPEC-654,credential prompt impersonation,CAPEC-504,
+CAPEC-655,avoid security tool identification by adding data,CAPEC-572,
+CAPEC-656,voice phishing,CAPEC-98,
+CAPEC-657,malicious automated software update via spoofing,CAPEC-186,
+CAPEC-660,root/jailbreak detection evasion via hooking,CAPEC-251,
+CAPEC-661,root/jailbreak detection evasion via debugging,CAPEC-121,
+CAPEC-662,adversary in the browser (aitb),CAPEC-94,
+CAPEC-663,exploitation of transient instruction execution,CAPEC-74; CAPEC-184,CAPEC-696
+CAPEC-664,server side request forgery,CAPEC-115,
+CAPEC-665,exploitation of thunderbolt protection flaws,CAPEC-276,
+CAPEC-666,bluesmacking,CAPEC-125,
+CAPEC-667,bluetooth impersonation attacks (bias),CAPEC-616,
+CAPEC-668,key negotiation of bluetooth attack (knob),CAPEC-115,
+CAPEC-669,alteration of a software update,CAPEC-184,
+CAPEC-670,software development tools maliciously altered,CAPEC-444,
+CAPEC-671,requirements for asic functionality maliciously altered,CAPEC-447,
+CAPEC-672,malicious code implanted during chip programming,CAPEC-444,
+CAPEC-673,developer signing maliciously altered software,CAPEC-444,
+CAPEC-674,design for fpga maliciously altered,CAPEC-447,
+CAPEC-675,retrieve data from decommissioned devices,CAPEC-116,
+CAPEC-676,nosql injection,CAPEC-248,
+CAPEC-677,server motherboard compromise,CAPEC-534,
+CAPEC-678,system build data maliciously altered,CAPEC-444,
+CAPEC-679,exploitation of improperly configured or implemented memory protections,CAPEC-1; CAPEC-180,
+CAPEC-680,exploitation of improperly controlled registers,CAPEC-1; CAPEC-180,
+CAPEC-681,exploitation of improperly controlled hardware security identifiers,CAPEC-1; CAPEC-180,
+CAPEC-682,exploitation of firmware or rom code with unpatchable vulnerabilities,CAPEC-212,
+CAPEC-690,metadata spoofing,,CAPEC-691
+CAPEC-691,spoof open-source software metadata,CAPEC-690,CAPEC-692; CAPEC-693
+CAPEC-692,spoof version control system commit metadata,CAPEC-691,
+CAPEC-693,starjacking,CAPEC-691,
+CAPEC-694,system location discovery,CAPEC-169,
+CAPEC-695,repo jacking,CAPEC-616,
+CAPEC-696,load value injection,CAPEC-663,
+CAPEC-697,dhcp spoofing,CAPEC-194,
+CAPEC-698,install malicious extension,CAPEC-542,
+CAPEC-699,eavesdropping on a monitor,CAPEC-651,
+CAPEC-700,network boundary bridging,CAPEC-161,
+CAPEC-701,browser in the middle (bitm),CAPEC-94,
+CAPEC-702,exploiting incorrect chaining or granularity of hardware debug components,CAPEC-180,

@@ -1,0 +1,49 @@
+sbatch \
+  --job-name=qwen_keywords \
+  --partition=debug \
+  --gres=gpu:1 \
+  --mem=32G \
+  --time=24:00:00 \
+  --chdir=/home/gurleen/paper/methodology/03_keyword_making/methods \
+  --output=/home/gurleen/paper/methodology/03_keyword_making/batch_run/qwen_keywords_%j.out \
+  --error=/home/gurleen/paper/methodology/03_keyword_making/batch_run/qwen_keywords_%j.err \
+  --wrap="/home/gurleen/miniconda3/envs/torchgpu/bin/python qwen_keywords.py"
+
+
+sbatch \
+  --job-name=keybert_modified \
+  --partition=debug \
+  --gres=gpu:1 \
+  --mem=16G \
+  --time=10:00:00 \
+  --chdir=/home/gurleen/paper/methodology/03_keyword_making/methods \
+  --output=/home/gurleen/paper/methodology/03_keyword_making/batch_run/keybert_modified_%j.out \
+  --error=/home/gurleen/paper/methodology/03_keyword_making/batch_run/keybert_modified_%j.err \
+  --wrap="/home/gurleen/miniconda3/envs/torchgpu/bin/python keybert_modified.py"
+
+
+
+
+
+old ones :
+sbatch \
+  --job-name=occlusion \
+  --partition=debug \
+  --gres=gpu:1 \
+  --mem=16G \
+  --time=10:00:00 \
+  --chdir=/home/gurleen/paper/methodology/03_keyword_making/methods \
+  --output=/home/gurleen/paper/methodology/03_keyword_making/batch_run/occlusion_%j.out \
+  --error=/home/gurleen/paper/methodology/03_keyword_making/batch_run/occlusion_%j.err \
+  --wrap="/home/gurleen/miniconda3/envs/torchgpu/bin/python occlusion.py"
+
+sbatch \
+  --job-name=phrase_similarity \
+  --partition=debug \
+  --gres=gpu:1 \
+  --mem=16G \
+  --time=10:00:00 \
+  --chdir=/home/gurleen/paper/methodology/03_keyword_making/methods \
+  --output=/home/gurleen/paper/methodology/03_keyword_making/batch_run/phrase_similarity_%j.out \
+  --error=/home/gurleen/paper/methodology/03_keyword_making/batch_run/phrase_similarity_%j.err \
+  --wrap="/home/gurleen/miniconda3/envs/torchgpu/bin/python phrase_similarity.py"

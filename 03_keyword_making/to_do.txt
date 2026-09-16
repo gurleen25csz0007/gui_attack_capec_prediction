@@ -1,0 +1,21 @@
+try models:
+occlusion
+occlusion relaxed
+text rank
+keybert modified
+phrase similarity
+we can also do occlusion/phrase simplified
+
+already have qwen
+
+| Input                         | Exact Match | Micro-F1 | Macro-F1 | Weighted-F1 | Sample-F1 | Jaccard | Hit@1 | Hit@5 | Hit@10 |
+| ----------------------------- | ----------: | -------: | -------: | ----------: | --------: | ------: | ----: | ----: | -----: |
+| Description only              |             |          |          |             |           |         |       |       |        |
+| TF-IDF                        |             |          |          |             |           |         |       |       |        |
+| TextRank                      |             |          |          |             |           |         |       |       |        |
+| YAKE                          |             |          |          |             |           |         |       |       |        |
+| KeyBERT                       |             |          |          |             |           |         |       |       |        |
+| Occlusion                     |             |          |          |             |           |         |       |       |        |
+| Occlusion Relaxed             |             |          |          |             |           |         |       |       |        |
+| Occlusion + TextRank fallback |             |          |          |             |           |         |       |       |        |
+
